@@ -1,0 +1,6 @@
+future==0.17.1
+mmcif==0.31
+rcsb.utils.io==0.20
+ruamel.yaml==0.15.87
+six==1.12.0
+xmltodict==0.11.0
