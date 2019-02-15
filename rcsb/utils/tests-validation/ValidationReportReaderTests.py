@@ -23,6 +23,7 @@ import logging
 import os
 import unittest
 
+from rcsb.utils.io.MarshalUtil import MarshalUtil
 from rcsb.utils.validation.ValidationReportReader import ValidationReportReader
 
 HERE = os.path.abspath(os.path.dirname(__file__))
@@ -35,6 +36,7 @@ logger = logging.getLogger()
 class ValidationReportReaderTests(unittest.TestCase):
 
     def setUp(self):
+        self.__mU = MarshalUtil()
         self.__dirPath = os.path.join(os.path.dirname(TOPDIR), 'rcsb', 'mock-data')
         self.__xsdPath = os.path.join(HERE, 'test-data', 'wwpdb_validation_v002.xsd')
 
@@ -45,19 +47,22 @@ class ValidationReportReaderTests(unittest.TestCase):
                                              '6drg_validation.xml.gz')
         self.__cifFileNmr = os.path.join(HERE, 'test-output', '6drg_validation.cif')
 
-        self.__schemaMapPath = os.path.join(HERE, 'test-data', 'vrpt_schemamap.json')
+        self.__dictionaryMapPath = os.path.join(HERE, 'test-data', 'vrpt_dictmap.json')
+        self.__dictionaryMap = self.__mU.doImport(self.__dictionaryMapPath, format="json")
 
     def tearDown(self):
         pass
 
     def testReadXrayValidationReport(self):
-        dbu = ValidationReportReader(self.__schemaMapPath)
-        ok = dbu.cnv(self.__exampleFileXray, self.__cifFileXray)
+        dbu = ValidationReportReader(self.__dictionaryMap)
+        cL = dbu.toCif(self.__exampleFileXray)
+        ok = self.__mU.doExport(self.__cifFileXray, cL, format="mmcif")
         self.assertTrue(ok)
 
     def testReadNmrValidationReport(self):
-        dbu = ValidationReportReader(self.__schemaMapPath)
-        ok = dbu.cnv(self.__exampleFileNmr, self.__cifFileNmr)
+        dbu = ValidationReportReader(self.__dictionaryMap)
+        cL = dbu.toCif(self.__exampleFileNmr)
+        ok = self.__mU.doExport(self.__cifFileNmr, cL, format="mmcif")
         self.assertTrue(ok)
 
 

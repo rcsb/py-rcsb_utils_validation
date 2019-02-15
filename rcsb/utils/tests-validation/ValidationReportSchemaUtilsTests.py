@@ -20,6 +20,7 @@ import logging
 import os
 import unittest
 
+from rcsb.utils.io.MarshalUtil import MarshalUtil
 from rcsb.utils.validation.ValidationReportSchemaUtils import ValidationReportSchemaUtils
 
 HERE = os.path.abspath(os.path.dirname(__file__))
@@ -37,7 +38,9 @@ class ValidationReportSchemaUtilsTests(unittest.TestCase):
         self.__dictPath = os.path.join(HERE, 'test-output', 'vrpt_mmcif_ext.dic')
         #
         # This schema mapping file is used by the XML report data file reader.
-        self.__schemaMapPath = os.path.join(HERE, 'test-output', 'vrpt_schemamap.json')
+        self.__dictionaryMapPath = os.path.join(HERE, 'test-output', 'vrpt_dictmap.json')
+        self.__dictionaryMapCsvPath = os.path.join(HERE, 'test-output', 'vrpt_dictmap.csv')
+        self.__mU = MarshalUtil()
 
     def tearDown(self):
         pass
@@ -47,12 +50,36 @@ class ValidationReportSchemaUtilsTests(unittest.TestCase):
         sObj = vrsu.readSchema(self.__xsdPath)
         logger.debug("Returns type %r" % type(sObj))
         logger.debug("Example length %d" % len(sObj))
-        ok = vrsu.buildDictionary(self.__dictPath, sObj, schemaMapPath=self.__schemaMapPath)
+
+        cL = vrsu.buildDictionary(sObj)
+        ok = self.__mU.doExport(self.__dictPath, cL, format="mmcif-dict")
         self.assertTrue(ok)
         #
-        schemaMap = vrsu.fetchSchemaMap(self.__schemaMapPath)
-        self.assertTrue('attributes' in schemaMap)
-        self.assertTrue(len(schemaMap['attributes']) > 50)
+        dictionaryMap = vrsu.getDictionaryMap(sObj)
+        ok = self.__mU.doExport(self.__dictionaryMapPath, dictionaryMap, format="json")
+        self.assertTrue(ok)
+        #
+        self.assertTrue('attributes' in dictionaryMap)
+        self.assertTrue(len(dictionaryMap['attributes']) > 50)
+
+    def testExportMapping(self):
+        """ Export schema correspondences as CSV.
+        """
+        vrsu = ValidationReportSchemaUtils()
+        sObj = vrsu.readSchema(self.__xsdPath)
+        dictionaryMap = vrsu.getDictionaryMap(sObj)
+        logger.info("Attribute count %d" % len(dictionaryMap['attributes']))
+        rL = []
+        for ky, d in dictionaryMap['attributes'].items():
+            kyL = ky.split("|")
+            catN = kyL[0]
+            atN = kyL[1]
+            row = {'xml_el': catN, 'xml_at': atN, 'mmcif_cat': d['cat'], 'mmcif_at': d['at']}
+            rL.append(row)
+        #
+        #
+        self.__mU.doExport(self.__dictionaryMapCsvPath, rL, format="csv")
+        # def __serializeCsv(self, filePath, rowDictList, fieldNames=None, **kwargs):{}
 
 
 def readValidationSchema():
@@ -61,8 +88,17 @@ def readValidationSchema():
     return suiteSelect
 
 
+def exportMapping():
+    suiteSelect = unittest.TestSuite()
+    suiteSelect.addTest(ValidationReportSchemaUtilsTests("testExportMapping"))
+    return suiteSelect
+
 if __name__ == '__main__':
 
     if True:
         mySuite = readValidationSchema()
+        unittest.TextTestRunner(verbosity=2).run(mySuite)
+
+    if True:
+        mySuite = exportMapping()
         unittest.TextTestRunner(verbosity=2).run(mySuite)

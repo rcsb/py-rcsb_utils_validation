@@ -22,7 +22,6 @@ import time
 from mmcif.api.DataCategory import DataCategory
 from mmcif.api.PdbxContainers import DataContainer
 
-from rcsb.utils.io.MarshalUtil import MarshalUtil
 from rcsb.utils.validation.ValidationReportSchemaUtils import ValidationReportSchemaUtils
 
 try:
@@ -38,17 +37,24 @@ class ValidationReportReader(object):
        and transforming these data into mmCIF objects/files.
     """
 
-    def __init__(self, schemaMapPath):
+    def __init__(self, dictionaryMap, stringKey=True):
+        self.__dictionaryMap = dictionaryMap
+        if stringKey:
+            sD = dictionaryMap['attributes']
+            tD = {}
+            for sK in sD:
+                sTup = tuple(sK.split('|'))
+                tD[sTup] = sD[sK]
+            self.__dictionaryMap['attributes'] = tD
+
         vrsu = ValidationReportSchemaUtils()
-        self.__schemaMap = vrsu.fetchSchemaMap(schemaMapPath)
         self.__atOrdD = vrsu.getAttributeOrder()
         self.__atMap = vrsu.getAttributeMap()
         self.__attribD = {}
-        for (catName, atName) in self.__schemaMap['attributes']:
+        for (catName, atName) in self.__dictionaryMap['attributes']:
             self.__attribD.setdefault(catName, []).append(atName)
-        self.__mU = MarshalUtil()
 
-    def read(self, xmlFilePath):
+    def toCif(self, xmlFilePath):
         """ Read input XML validation report data file and return data
             transformed mmCIF container objects.
         """
@@ -56,21 +62,6 @@ class ValidationReportReader(object):
         rD = self.__extract(xrt)
         myContainerList = self.__buildCif(rD)
         return myContainerList
-
-    def cnv(self, xmlfilePath, cifFilePath):
-        """Read input XML validation report data file and return data
-           transformed mmCIF container objects.
-
-        Args:
-            xmlfilePath (str): input XML validation report data file path
-            cifFilePath (str): output mmCIF data file
-
-        Returns:
-            True for success or False otherwise
-        """
-        cL = self.read(xmlfilePath)
-        ok = self.__mU.doExport(cifFilePath, cL, format="mmcif")
-        return ok
 
     def __buildCif(self, rD, containerName='vrpt'):
         """ Construct a mmCIF data category objects for the input
@@ -84,6 +75,7 @@ class ValidationReportReader(object):
             containers (list):  data container list
         """
         #
+
         curContainer = DataContainer(containerName)
         for elName in rD:
             catName = elName
@@ -114,12 +106,12 @@ class ValidationReportReader(object):
         #
         # Adjust schema names -
         #
-        atD = self.__schemaMap['attributes']
+        atD = self.__dictionaryMap['attributes']
         for catName in curContainer.getObjNameList():
             catObj = curContainer.getObj(catName)
             atNameList = catObj.getAttributeList()
             mapD = {}
-            mapCatName = self.__schemaMap['categories'][catName] if catName in self.__schemaMap[
+            mapCatName = self.__dictionaryMap['categories'][catName] if catName in self.__dictionaryMap[
                 'categories'] else catName
             for atName in atNameList:
                 mapD[atName] = atD[(catName, atName)]['at'] if (catName, atName) in atD else atName
@@ -150,17 +142,22 @@ class ValidationReportReader(object):
                                    XML native data names.
         """
         atL = ['altcode', 'chain', 'ent', 'model', 'resname', 'resnum', 'said', 'seq']
+        unAts = ['PDB-resolution-low', 'PDB-resolution', 'PDB-R', 'PDB-Rfree', 'DCC_Rfree', 'absolute_RSRZ_percentile', 'relative_RSRZ_percentile']
         rD = {}
         for el in xrt.getroot():
-            logger.debug("-- Element tag %r attrib count %r" % (el.tag, len(el.attrib)))
-            rD.setdefault(el.tag, []).append(el.attrib)
+            logger.debug("-- Element tag %r attrib count %r" % (el.tag, list(el.attrib.keys())))
+            q = {k: None if ((k in unAts) and (el.attrib[k] == 'NotAvailable')) else el.attrib[k] for k in el.attrib}
+            rD.setdefault(el.tag, []).append(q)
             #
             msgD = el.attrib if el.tag == 'ModelledSubgroup' else {}
             # for ch in el.getiterator(tag=None):
             for ch in el:
                 logger.debug("-- --> child element tag %r attrib count %r" % (ch.tag, len(ch.attrib)))
                 # add parent cardinal attributes at residue level
-                d = {k: ch.attrib[k] for k in ch.attrib}
+                # d = {k: ch.attrib[k] for k in ch.attrib}
+                # Filter the NotAvailable values for floatOrUnavailable types
+                d = {k: None if ((k in unAts) and (ch.attrib[k] == 'NotAvailable')) else ch.attrib[k] for k in
+                     ch.attrib}
                 d.update({k: msgD[k] for k in atL if k in msgD})
                 rD.setdefault(ch.tag, []).append(d)
                 logger.debug("-- --> child element tag %r attrib count %r" % (ch.tag, len(d)))

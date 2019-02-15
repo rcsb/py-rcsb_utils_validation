@@ -23,8 +23,6 @@ from mmcif.api.PdbxContainers import CifName
 from mmcif.api.PdbxContainers import DataContainer
 from mmcif.api.PdbxContainers import DefinitionContainer
 
-from rcsb.utils.io.MarshalUtil import MarshalUtil
-
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
@@ -349,53 +347,38 @@ class ValidationReportSchemaUtils(object):
                           "entry_id": ("entry", "id", "code")}
         #
 
-    def buildDictionary(self, dictPath, cD, schemaMapPath=None):
+    def buildDictionary(self, cD):
         """
 
         Args:
-            dictPath (string): output dictionary file path
             cD (dict): input consolidated schema dictionary
-            schemaMapPath (string): optional path to save schema mapping file
 
         Returns:
-            True for success or False otherwise
+            containerList (obj list) container list containing definition content
         """
-        mU = MarshalUtil()
-        schemaMap = self.__exportSchemaMapping(cD)
-        cL = self.__buildDefinitions(cD, schemaMap)
-        ok = mU.doExport(dictPath, cL, format="mmcif-dict")
-        #
-        if schemaMapPath:
-            tD = schemaMap['attributes']
+        dictionaryMap = self.__exportdictionaryMapping(cD)
+        cL = self.__buildDefinitions(cD, dictionaryMap)
+        return cL
+
+    def getDictionaryMap(self, cD, stringKey=True):
+        """
+
+        Args:
+            cD (dict): input consolidated schema dictionary
+
+        Returns:
+            containerList (obj list) container list containing definition content
+        """
+        dictionaryMap = self.__exportdictionaryMapping(cD)
+        if stringKey:
+            tD = dictionaryMap['attributes']
             sD = {}
             for kTup in tD:
                 sTup = "|".join(kTup)
                 sD[sTup] = tD[kTup]
-            schemaMap['attributes'] = sD
-            mU.doExport(schemaMapPath, schemaMap, format='json', indent=3)
+            dictionaryMap['attributes'] = sD
         #
-
-        return ok
-
-    def fetchSchemaMap(self, schemaMapPath):
-        """ Fetch data from a saved schema map.
-
-        Args:
-            schemaMapPath: input schema map file
-
-        Returns:
-            schema map (dict):  category and attribute schema name mapping dictionary
-        """
-        mU = MarshalUtil()
-        schemaMap = mU.doImport(schemaMapPath, format="json")
-        sD = schemaMap['attributes']
-        tD = {}
-        for sK in sD:
-            sTup = tuple(sK.split('|'))
-            tD[sTup] = sD[sK]
-        schemaMap['attributes'] = tD
-        #
-        return schemaMap
+        return dictionaryMap
 
     def getAttributeOrder(self):
         ordD = {}
@@ -458,14 +441,14 @@ class ValidationReportSchemaUtils(object):
         dataH.append(dc)
         return dataH
 
-    def __buildDefinitions(self, cD, schemaMap):
+    def __buildDefinitions(self, cD, dictionaryMap):
         """ Construct an extension dictionary from input consolidate
             metadata extracted from the XML schema, and from the
             input schema name mapping dictionary.
 
         Args:
             cD (dict): consolidated xml schema data
-            schemaMap (dict): mapping details for categories and attributes
+            dictionaryMap (dict): mapping details for categories and attributes
 
         Returns:
 #
@@ -480,7 +463,7 @@ class ValidationReportSchemaUtils(object):
             # atL = tD['attributes'] if 'attributes' in tD else []
             description = tD['description'] if 'description' in tD else None
             description = self.__filterDescription(description, self.__catMappingD)
-            mapCatName = schemaMap['categories'][catName] if catName in schemaMap['categories'] else catName
+            mapCatName = dictionaryMap['categories'][catName] if catName in dictionaryMap['categories'] else catName
             if 'notused' in mapCatName:
                 continue
             if mapCatName in ['pdbx_vrpt_summary']:
@@ -491,7 +474,8 @@ class ValidationReportSchemaUtils(object):
             #
             atD = tD['attribD'] if 'attribD' in tD else {}
             for atName in atD:
-                mD = schemaMap['attributes'][(catName, atName)] if (catName, atName) in schemaMap['attributes'] else {}
+                mD = dictionaryMap['attributes'][(catName, atName)] if (catName, atName) in dictionaryMap[
+                    'attributes'] else {}
                 aDef = self.__buildAttributeDefinition(atD[atName], mD)
                 cL.append(aDef)
 
@@ -503,7 +487,7 @@ class ValidationReportSchemaUtils(object):
             input schema name mapping dictionary.
         Args:
             atD (dict): attribute metadata dictionary
-            schemaMap (dict): mapping details for categories and attributes
+            dictionaryMap (dict): mapping details for categories and attributes
 
         Returns:
                 Attribute definition (object)
@@ -539,7 +523,7 @@ class ValidationReportSchemaUtils(object):
         #
         if atType == 'text' and atDescription.find('comma separate') >= 0:
             atType = 'alphanum-csv'
-        if atType == 'text' and '_date' in mapAtName:
+        if atType == 'text' and '_date' in mapAtName and mapAtName != 'report_creation_date':
             atType = 'yyyy-mm-dd'
         #
         atType = pType if pType else atType
@@ -663,7 +647,7 @@ class ValidationReportSchemaUtils(object):
         #
         return atName
 
-    def __exportSchemaMapping(self, cD):
+    def __exportdictionaryMapping(self, cD):
         """ Export a schema mapping file from input consolidated schema metadata.
 
         Args:
