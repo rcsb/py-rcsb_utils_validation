@@ -93,6 +93,7 @@ def exportMapping():
     suiteSelect.addTest(ValidationReportSchemaUtilsTests("testExportMapping"))
     return suiteSelect
 
+
 if __name__ == '__main__':
 
     if True:
