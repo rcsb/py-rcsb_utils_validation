@@ -1,5 +1,5 @@
 # File: setup.py
-# Date: 1-Nov-2018
+# Date: 6-Mar-2019
 #
 # Updates:
 #
@@ -45,9 +45,9 @@ setup(
         'console_scripts': []
     },
     #
-    install_requires=['mmcif >= 0.31',
-                      'rcsb.utils.io >= 0.19',
-                      'rcsb.utils.config >= 0.15'],
+    install_requires=['mmcif >= 0.34',
+                      'rcsb.utils.io >= 0.22',
+                      'rcsb.utils.config >= 0.16'],
     packages=find_packages(exclude=['rcsb.mock-data', 'rcsb.utils.tests-validation', 'rcsb.utils.tests-*', 'tests.*']),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
