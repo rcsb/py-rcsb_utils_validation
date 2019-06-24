@@ -26,20 +26,19 @@ from rcsb.utils.validation.ValidationReportSchemaUtils import ValidationReportSc
 HERE = os.path.abspath(os.path.dirname(__file__))
 TOPDIR = os.path.dirname(os.path.dirname(HERE))
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s]-%(module)s.%(funcName)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s]-%(module)s.%(funcName)s: %(message)s")
 logger = logging.getLogger()
 
 
 class ValidationReportSchemaUtilsTests(unittest.TestCase):
-
     def setUp(self):
-        self.__dirPath = os.path.join(os.path.dirname(TOPDIR), 'rcsb', 'mock-data')
-        self.__xsdPath = os.path.join(HERE, 'test-data', 'wwpdb_validation_v002.xsd')
-        self.__dictPath = os.path.join(HERE, 'test-output', 'vrpt_mmcif_ext.dic')
+        self.__dirPath = os.path.join(os.path.dirname(TOPDIR), "rcsb", "mock-data")
+        self.__xsdPath = os.path.join(HERE, "test-data", "wwpdb_validation_v002.xsd")
+        self.__dictPath = os.path.join(HERE, "test-output", "vrpt_mmcif_ext.dic")
         #
         # This schema mapping file is used by the XML report data file reader.
-        self.__dictionaryMapPath = os.path.join(HERE, 'test-output', 'vrpt_dictmap.json')
-        self.__dictionaryMapCsvPath = os.path.join(HERE, 'test-output', 'vrpt_dictmap.csv')
+        self.__dictionaryMapPath = os.path.join(HERE, "test-output", "vrpt_dictmap.json")
+        self.__dictionaryMapCsvPath = os.path.join(HERE, "test-output", "vrpt_dictmap.csv")
         self.__mU = MarshalUtil()
 
     def tearDown(self):
@@ -48,19 +47,19 @@ class ValidationReportSchemaUtilsTests(unittest.TestCase):
     def testProcessXsdSchema(self):
         vrsu = ValidationReportSchemaUtils()
         sObj = vrsu.readSchema(self.__xsdPath)
-        logger.debug("Returns type %r" % type(sObj))
-        logger.debug("Example length %d" % len(sObj))
+        logger.debug("Returns type %r", type(sObj))
+        logger.debug("Example length %d", len(sObj))
 
         cL = vrsu.buildDictionary(sObj)
-        ok = self.__mU.doExport(self.__dictPath, cL, format="mmcif-dict")
+        ok = self.__mU.doExport(self.__dictPath, cL, fmt="mmcif-dict")
         self.assertTrue(ok)
         #
         dictionaryMap = vrsu.getDictionaryMap(sObj)
-        ok = self.__mU.doExport(self.__dictionaryMapPath, dictionaryMap, format="json")
+        ok = self.__mU.doExport(self.__dictionaryMapPath, dictionaryMap, fmt="json")
         self.assertTrue(ok)
         #
-        self.assertTrue('attributes' in dictionaryMap)
-        self.assertTrue(len(dictionaryMap['attributes']) > 50)
+        self.assertTrue("attributes" in dictionaryMap)
+        self.assertTrue(len(dictionaryMap["attributes"]) > 50)
 
     def testExportMapping(self):
         """ Export schema correspondences as CSV.
@@ -68,17 +67,17 @@ class ValidationReportSchemaUtilsTests(unittest.TestCase):
         vrsu = ValidationReportSchemaUtils()
         sObj = vrsu.readSchema(self.__xsdPath)
         dictionaryMap = vrsu.getDictionaryMap(sObj)
-        logger.info("Attribute count %d" % len(dictionaryMap['attributes']))
+        logger.info("Attribute count %d", len(dictionaryMap["attributes"]))
         rL = []
-        for ky, d in dictionaryMap['attributes'].items():
+        for ky, dD in dictionaryMap["attributes"].items():
             kyL = ky.split("|")
             catN = kyL[0]
             atN = kyL[1]
-            row = {'xml_el': catN, 'xml_at': atN, 'mmcif_cat': d['cat'], 'mmcif_at': d['at']}
+            row = {"xml_el": catN, "xml_at": atN, "mmcif_cat": dD["cat"], "mmcif_at": dD["at"]}
             rL.append(row)
         #
         #
-        self.__mU.doExport(self.__dictionaryMapCsvPath, rL, format="csv")
+        self.__mU.doExport(self.__dictionaryMapCsvPath, rL, fmt="csv")
         # def __serializeCsv(self, filePath, rowDictList, fieldNames=None, **kwargs):{}
 
 
@@ -94,12 +93,10 @@ def exportMapping():
     return suiteSelect
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    if True:
-        mySuite = readValidationSchema()
-        unittest.TextTestRunner(verbosity=2).run(mySuite)
+    mySuite = readValidationSchema()
+    unittest.TextTestRunner(verbosity=2).run(mySuite)
 
-    if True:
-        mySuite = exportMapping()
-        unittest.TextTestRunner(verbosity=2).run(mySuite)
+    mySuite = exportMapping()
+    unittest.TextTestRunner(verbosity=2).run(mySuite)
