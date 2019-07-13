@@ -1,5 +1,7 @@
 # RCSB Python PDB Validation Data Utilities
 
+ [![Build Status](https://dev.azure.com/rcsb/RCSB%20PDB%20Python%20Projects/_apis/build/status/rcsb.py-rcsb_utils_validation?branchName=master)](https://dev.azure.com/rcsb/RCSB%20PDB%20Python%20Projects/_build/latest?definitionId=4&branchName=master)
+
 ## Introduction
 
 Python utility classes for calculating and accessing PDB validation data.
