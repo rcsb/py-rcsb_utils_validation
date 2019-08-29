@@ -4,4 +4,5 @@
 15-Feb-2019 V0.12 Add tests for exporting schema mapping data
  6-Mar-2019 V0.13 Update test documentation and formatting
 24-Jun-2019 V0.14 Update development workflow
+29-Aug-2019 V0.15 Add ValidationReportProvider() and revise cache management
 #

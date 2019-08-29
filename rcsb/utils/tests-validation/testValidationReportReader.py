@@ -37,7 +37,6 @@ class ValidationReportReaderTests(unittest.TestCase):
     def setUp(self):
         self.__mU = MarshalUtil()
         self.__dirPath = os.path.join(os.path.dirname(TOPDIR), "rcsb", "mock-data")
-        self.__xsdPath = os.path.join(HERE, "test-data", "wwpdb_validation_v002.xsd")
 
         self.__exampleFileXray = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "cb", "1cbs", "1cbs_validation.xml.gz")
         self.__cifFileXray = os.path.join(HERE, "test-output", "1cbs_validation.cif")
@@ -51,14 +50,16 @@ class ValidationReportReaderTests(unittest.TestCase):
         pass
 
     def testReadXrayValidationReport(self):
-        dbu = ValidationReportReader(self.__dictionaryMap)
-        cL = dbu.toCif(self.__exampleFileXray)
+        vrr = ValidationReportReader(self.__dictionaryMap)
+        xrt = self.__mU.doImport(self.__exampleFileXray, fmt="xml")
+        cL = vrr.toCif(xrt)
         ok = self.__mU.doExport(self.__cifFileXray, cL, fmt="mmcif")
         self.assertTrue(ok)
 
     def testReadNmrValidationReport(self):
-        dbu = ValidationReportReader(self.__dictionaryMap)
-        cL = dbu.toCif(self.__exampleFileNmr)
+        vrr = ValidationReportReader(self.__dictionaryMap)
+        xrt = self.__mU.doImport(self.__exampleFileNmr, fmt="xml")
+        cL = vrr.toCif(xrt)
         ok = self.__mU.doExport(self.__cifFileNmr, cL, fmt="mmcif")
         self.assertTrue(ok)
 

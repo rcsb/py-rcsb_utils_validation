@@ -14,26 +14,19 @@ and transforming these data into mmCIF objects/files.
 
 """
 
-import gzip
 import logging
 import operator
-import time
 
 from mmcif.api.DataCategory import DataCategory
 from mmcif.api.PdbxContainers import DataContainer
 
 from rcsb.utils.validation.ValidationReportSchemaUtils import ValidationReportSchemaUtils
 
-try:
-    import xml.etree.cElementTree as ET
-except ImportError:
-    import xml.etree.ElementTree as ET
-
 logger = logging.getLogger(__name__)
 
 
 class ValidationReportReader(object):
-    """Various utilities for extracting data wwPDB validation report data
+    """Various utilities for extracting data from wwPDB validation report data
        and transforming these data into mmCIF objects/files.
     """
 
@@ -54,13 +47,17 @@ class ValidationReportReader(object):
         for (catName, atName) in self.__dictionaryMap["attributes"]:
             self.__attribD.setdefault(catName, []).append(atName)
 
-    def toCif(self, xmlFilePath):
+    def toCif(self, xrt):
         """ Read input XML validation report data file and return data
             transformed mmCIF container objects.
         """
-        xrt = self.__parse(xmlFilePath)
-        rD = self.__extract(xrt)
-        myContainerList = self.__buildCif(rD)
+        myContainerList = []
+        try:
+            if xrt:
+                rD = self.__extract(xrt)
+                myContainerList = self.__buildCif(rD)
+        except Exception as e:
+            logger.error("Failing with %s", str(e))
         return myContainerList
 
     def __buildCif(self, rD, containerName="vrpt"):
@@ -167,25 +164,6 @@ class ValidationReportReader(object):
         return rD
         #
 
-    def __parse(self, filePath):
-        """ Parse the input XML data file and return ElementTree root element.
-        """
-        tree = []
-        if filePath[-3:] == ".gz":
-            with gzip.open(filePath, mode="rb") as ifh:
-                logger.debug("Parsing %s", filePath)
-                tV = time.time()
-                tree = ET.parse(ifh)
-                logger.debug("Parsed %s %.2f seconds", filePath, time.time() - tV)
-        else:
-            with open(filePath, mode="rb") as ifh:
-                logger.debug("Parsing %s", filePath)
-                tV = time.time()
-                tree = ET.parse(ifh)
-                logger.debug("Parsed %s in %.2f seconds", filePath, time.time() - tV)
-        return tree
-
-    # -
     def __traverse(self, xrt, ns):
         """ Internal routine to traverse the dom covering/logging all elements and attributes.
 
