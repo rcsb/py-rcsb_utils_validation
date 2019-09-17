@@ -33,7 +33,7 @@ logger = logging.getLogger()
 class ValidationReportSchemaUtilsTests(unittest.TestCase):
     def setUp(self):
         self.__dirPath = os.path.join(os.path.dirname(TOPDIR), "rcsb", "mock-data")
-        self.__xsdPath = os.path.join(HERE, "test-data", "wwpdb_validation_v002.xsd")
+        self.__xsdPath = os.path.join(HERE, "test-data", "wwpdb_validation_v003.xsd")
         self.__dictPath = os.path.join(HERE, "test-output", "vrpt_mmcif_ext.dic")
         #
         # This schema mapping file is used by the XML report data file reader.

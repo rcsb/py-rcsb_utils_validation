@@ -41,14 +41,14 @@ class ValidationReportSchemaUtils(object):
         #
         # Schema provenance -
         #
-        self.__schemaPath = "http://wwpdb.org/validation/schema/wwpdb_validation_v002.xsd"
-        self.__schemaVersion = "V002"
+        self.__schemaPath = "http://wwpdb.org/validation/schema/wwpdb_validation_v003.xsd"
+        self.__schemaVersion = "V003"
         #
         # Translated dictionary provenance -
         #
         self.__dictName = "vrpt_mmcif_ext.dic"
         self.__dictDescription = "wwPDB Validation Report extension dictionary"
-        self.__dictVersion = "0.001"
+        self.__dictVersion = "0.003"
         self.__updateDate = time.strftime("%Y-%m-%d", time.localtime())
         self.__updateComment = "Preliminary translated version"
         #
@@ -134,6 +134,8 @@ class ValidationReportSchemaUtils(object):
             "chemicalshiftsInputFilename": "chemical_shifts_input_filename",
             "attemptedValidationSteps": "attempted_validation_steps",
             "no-ligands-for-mogul": "no_ligands_for_mogul",
+            "no-ligands-for-buster-report": "no_ligands_for_buster_report",
+            "ligands-for-buster-report": "ligands_for_buster_report",
             "RestypesNotcheckedForBondAngleGeometry": "restypes_notchecked_for_bond_angle_geometry",
             "angles_rmsz": "angles_RMSZ",
             "bonds_rmsz": "bonds_RMSZ",
@@ -336,6 +338,7 @@ class ValidationReportSchemaUtils(object):
             "numobs": "numobs",
             "Zscore": "Zscore",
             "mindiff": "mindiff",
+            "local_density": "local_density",
         }
         #
         self.__parentD = {
