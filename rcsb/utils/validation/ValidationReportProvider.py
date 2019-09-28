@@ -40,7 +40,8 @@ class ValidationReportProvider(SingletonClass):
             useCache (bool, optional): flag to use cached files. Defaults to True.
 
         """
-        urlTarget = kwargs.get("urlTarget", "https://raw.githubusercontent.com/rcsb/py-rcsb_mock-data/master/dictionaries/vrpt_dictmap.json")
+
+        urlTarget = kwargs.get("urlTarget", "https://raw.githubusercontent.com/rcsb/py-rcsb_exdb_assets/master/dictionaries/vrpt_dictmap.json")
         dirPath = kwargs.get("dirPath", ".")
         useCache = kwargs.get("useCache", True)
         self.__mapD = self.__reload(urlTarget, dirPath, useCache=useCache)
