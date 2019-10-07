@@ -48,6 +48,9 @@ class ValidationReportProvider(SingletonClass):
         self.__reader = None
         logger.debug("Leaving constructor")
 
+    def testCache(self):
+        return self.__mapD and "categories" in self.__mapD and "attributes" in self.__mapD
+
     def __reload(self, urlTarget, dirPath, useCache=True):
         """ Reload local cache of mapping resources to support validation report reader and translator.
 
