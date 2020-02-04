@@ -10,4 +10,5 @@
 28-Sep-2019 V0.18 Update schema mapping path
  7-Oct-2019 V0.19 Add testCache() method ValidationReportProvider()
 23-Nov-2019 V0.20 Move pipeline to py38
+ 3-Feb-2020 V0.21 Update dependencies for split configuration
 #
