@@ -1,6 +1,7 @@
 future >= 0.17.1
-mmcif >= 0.50
-rcsb.utils.io >= 0.52
+mmcif >= 0.52
+rcsb.utils.io >= 0.63
 ruamel.yaml
 six >= 1.12.0
-rcsb.utils.config >= 0.33
+rcsb.utils.config >= 0.35
+#

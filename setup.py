@@ -35,13 +35,12 @@ setup(
         "Natural Language :: English",
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ),
     entry_points={"console_scripts": []},
     #
-    install_requires=["mmcif >= 0.50", "rcsb.utils.io >= 0.52", "rcsb.utils.config >= 0.33"],
+    install_requires=["mmcif >= 0.52", "rcsb.utils.io >= 0.63", "rcsb.utils.config >= 0.35"],
     packages=find_packages(exclude=["rcsb.mock-data", "rcsb.utils.tests-validation", "rcsb.utils.tests-*", "tests.*"]),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
