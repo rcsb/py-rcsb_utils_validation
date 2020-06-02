@@ -5,6 +5,7 @@
 # Version: 0.001
 #
 # Update:
+#  1-Jun-2020 jdw Updated to V4 schema consolidate static (required  by V4) and dynamic definitions.
 #
 ##
 """
@@ -33,12 +34,13 @@ logger = logging.getLogger()
 class ValidationReportSchemaUtilsTests(unittest.TestCase):
     def setUp(self):
         self.__dirPath = os.path.join(os.path.dirname(TOPDIR), "rcsb", "mock-data")
-        self.__xsdPath = os.path.join(HERE, "test-data", "wwpdb_validation_v003.xsd")
-        self.__dictPath = os.path.join(HERE, "test-output", "vrpt_mmcif_ext.dic")
+        self.__xsdPath = os.path.join(HERE, "test-data", "wwpdb_validation_v004.xsd")
+        self.__dictPath = os.path.join(HERE, "test-output", "vrpt_mmcif_ext_v4.dic")
+        self.__dictStaticPath = os.path.join(HERE, "test-data", "em_validation_ext_v4.dic")
         #
         # This schema mapping file is used by the XML report data file reader.
-        self.__dictionaryMapPath = os.path.join(HERE, "test-output", "vrpt_dictmap.json")
-        self.__dictionaryMapCsvPath = os.path.join(HERE, "test-output", "vrpt_dictmap.csv")
+        self.__dictionaryMapPath = os.path.join(HERE, "test-output", "vrpt_dictmap_v4.json")
+        self.__dictionaryMapCsvPath = os.path.join(HERE, "test-output", "vrpt_dictmap_v4.csv")
         self.__mU = MarshalUtil()
 
     def tearDown(self):
@@ -46,11 +48,19 @@ class ValidationReportSchemaUtilsTests(unittest.TestCase):
 
     def testProcessXsdSchema(self):
         vrsu = ValidationReportSchemaUtils()
-        sObj = vrsu.readSchema(self.__xsdPath)
+        sObj = vrsu.readSchema(self.__xsdPath, verbose=False)
         logger.debug("Returns type %r", type(sObj))
-        logger.debug("Example length %d", len(sObj))
+        logger.debug("Schema category length %d", len(sObj))
+        ok = self.__mU.doExport(os.path.join(HERE, "test-output", "schema-object.json"), sObj, fmt="json", indent=3)
 
+        # import static definitions -
+        scL = self.__mU.doImport(self.__dictStaticPath, fmt="mmcif-dict")
+        logger.info("Static definition count %d", len(scL))
+        #
         cL = vrsu.buildDictionary(sObj)
+        logger.info("Generated definition count %d", len(cL))
+        #
+        cL.extend(scL)
         ok = self.__mU.doExport(self.__dictPath, cL, fmt="mmcif-dict")
         self.assertTrue(ok)
         #
@@ -59,7 +69,7 @@ class ValidationReportSchemaUtilsTests(unittest.TestCase):
         self.assertTrue(ok)
         #
         self.assertTrue("attributes" in dictionaryMap)
-        self.assertTrue(len(dictionaryMap["attributes"]) > 50)
+        self.assertTrue(len(dictionaryMap["attributes"]) > 420)
 
     def testExportMapping(self):
         """ Export schema correspondences as CSV.

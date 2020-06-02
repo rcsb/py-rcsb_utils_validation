@@ -14,6 +14,7 @@ and transforming these data into mmCIF objects/files.
 
 """
 
+import copy
 import logging
 import operator
 
@@ -31,7 +32,7 @@ class ValidationReportReader(object):
     """
 
     def __init__(self, dictionaryMap, stringKey=True):
-        self.__dictionaryMap = dictionaryMap
+        self.__dictionaryMap = copy.deepcopy(dictionaryMap)
         if stringKey:
             sD = dictionaryMap["attributes"]
             tD = {}
@@ -39,13 +40,14 @@ class ValidationReportReader(object):
                 sTup = tuple(sK.split("|"))
                 tD[sTup] = sD[sK]
             self.__dictionaryMap["attributes"] = tD
-
+        #
         vrsu = ValidationReportSchemaUtils()
         self.__atOrdD = vrsu.getAttributeOrder()
         self.__atMap = vrsu.getAttributeMap()
         self.__attribD = {}
         for (catName, atName) in self.__dictionaryMap["attributes"]:
             self.__attribD.setdefault(catName, []).append(atName)
+        self.__version = self.__dictionaryMap["_version"] if "_version" in self.__dictionaryMap else None
 
     def toCif(self, xrt):
         """ Read input XML validation report data file and return data
@@ -56,6 +58,13 @@ class ValidationReportReader(object):
             if xrt:
                 rD = self.__extract(xrt)
                 myContainerList = self.__buildCif(rD)
+                # -- parse extra bits only if version is defined starting with V004
+                if self.__version:
+                    extraL = self.__extractExtra(xrt)
+                    for extra in extraL:
+                        myContainerList[0].append(extra)
+                # --
+
         except Exception as e:
             logger.error("Failing with %s", str(e))
         return myContainerList
@@ -124,7 +133,8 @@ class ValidationReportReader(object):
                 nL = [self.__atMap[ky] if ky in self.__atMap else ky for ky in pVL]
                 catObj.setValue(",".join(nL), "properties", iRow)
                 # logger.info("Row %r properties %r" % (iRow, pV))
-            return [curContainer]
+        #
+        return [curContainer]
 
     def __extract(self, xrt):
         """ Extract data from the input document and return a dictionary
@@ -137,12 +147,23 @@ class ValidationReportReader(object):
             Extracted data (dict): dictionary organized by category with
                                    XML native data names.
         """
+        atD = self.__dictionaryMap["attributes"]
+        skipElements = ["EM_validation"]
         atL = ["altcode", "chain", "ent", "model", "resname", "resnum", "said", "seq"]
         unAts = ["PDB-resolution-low", "PDB-resolution", "PDB-R", "PDB-Rfree", "DCC_Rfree", "absolute_RSRZ_percentile", "relative_RSRZ_percentile"]
         rD = {}
         for el in xrt.getroot():
-            logger.debug("-- Element tag %r attrib count %r", el.tag, list(el.attrib.keys()))
-            qV = {k: None if ((k in unAts) and (el.attrib[k] == "NotAvailable")) else el.attrib[k] for k in el.attrib}
+            logger.debug("-- Element tag %r attrib count %d", el.tag, len(list(el.attrib.keys())))
+            if el.tag in skipElements:
+                continue
+            qV = {}
+            for atName in el.attrib:
+                if (el.tag, atName) not in atD:
+                    continue
+                qV[atName] = None if ((atName in unAts) and (el.attrib[atName] == "NotAvailable")) else el.attrib[atName]
+
+            # qV = {k: None if ((k in unAts) and (el.attrib[k] == "NotAvailable")) else el.attrib[k] for k in el.attrib}
+            logger.debug("qV %r", qV)
             rD.setdefault(el.tag, []).append(qV)
             #
             msgD = el.attrib if el.tag == "ModelledSubgroup" else {}
@@ -163,6 +184,257 @@ class ValidationReportReader(object):
                     rD.setdefault(gch.tag, []).append(gch.attrib)
         return rD
         #
+
+    def __extractExtra(self, xrt):
+        """ Separately extract and parse data from the input document related to EM graphs.
+        Args:
+            xrt: ElementTree root element
+
+        Returns:
+            (list): DataCategory objects
+        """
+        rL = []
+        elV = xrt.find("EM_validation")
+        if not elV:
+            return rL
+        #
+        graphDataL = []
+        #
+        logger.debug("Starting extraExtract -- ")
+        gAtList = ["graph_data_id", "graph_id", "title", "x_axis_title", "x_axis_scale", "x_axis_units", "y_axis_title", "y_axis_scale", "y_axis_units"]
+        infObj = DataCategory("pdbx_vrpt_em_2d_graph_info", gAtList)
+        #
+        for el in elV:
+            logger.debug("-- EM element tag %r attrib count (%d): %r", el.tag, len(list(el.attrib.keys())), list(el.attrib.keys()))
+            if el.tag == "RecommendedContourLevel" and "value" in el.attrib:
+                cObj = DataCategory("pdbx_vrpt_em_details", attributeNameList=["ordinal", "recommended_contour_level"])
+                cObj.setValue(1, "ordinal", 0)
+                cObj.setValue(el.attrib["value"], "recommended_contour_level", 0)
+                rL.append(cObj)
+            elif el.tag == "map_value_distribution":
+                try:
+                    dL = self.__getGraphDataElements(el, graphDataId="d_mvd")
+                    cgD = self.__getCommonGraphAttributes(el)
+                    if dL and cgD:
+                        iRow = infObj.getRowCount()
+                        for k, v in cgD.items():
+                            infObj.setValue(v, k, iRow)
+                        infObj.setValue("map_value_distribution", "graph_id", iRow)
+                        infObj.setValue("d_mvd", "graph_data_id", iRow)
+                        cObj = DataCategory("pdbx_vrpt_em_graph_map_value_distribution", attributeNameList=["graph_id"])
+                        cObj.setValue("map_value_distribution", "graph_id", 0)
+                        graphDataL.extend(dL)
+                        rL.append(cObj)
+                except Exception as e:
+                    logger.exception("Failing with %s", str(e))
+            elif el.tag == "volume_estimate":
+                try:
+                    dL = self.__getGraphDataElements(el, graphDataId="d_ve")
+                    cgD = self.__getCommonGraphAttributes(el)
+                    if dL and cgD:
+                        iRow = infObj.getRowCount()
+                        for k, v in cgD.items():
+                            infObj.setValue(v, k, iRow)
+                        infObj.setValue("volume_estimate", "graph_id", iRow)
+                        infObj.setValue("d_ve", "graph_data_id", iRow)
+                        cObj = DataCategory("pdbx_vrpt_em_graph_volume_estimate", attributeNameList=["graph_id"])
+                        cObj.setValue("volume_estimate", "graph_id", 0)
+                        graphDataL.extend(dL)
+                        rL.append(cObj)
+                except Exception as e:
+                    logger.exception("Failing with %s", str(e))
+            elif el.tag == "rotationally_averaged_power_spectrum":
+                try:
+                    dL = self.__getGraphDataElements(el, graphDataId="d_raps")
+                    cgD = self.__getCommonGraphAttributes(el)
+                    if dL and cgD:
+                        iRow = infObj.getRowCount()
+                        for k, v in cgD.items():
+                            infObj.setValue(v, k, iRow)
+                        infObj.setValue("rotationally_averaged_power_spectrum", "graph_id", iRow)
+                        infObj.setValue("d_raps", "graph_data_id", iRow)
+                        cObj = DataCategory("pdbx_vrpt_em_graph_rotationally_averaged_power_spectrum", attributeNameList=["graph_id"])
+                        cObj.setValue("rotationally_averaged_power_spectrum", "graph_id", 0)
+                        graphDataL.extend(dL)
+                        rL.append(cObj)
+                except Exception as e:
+                    logger.exception("Failing with %s", str(e))
+            elif el.tag == "atom_inclusion":
+                # backbone or all_atoms
+                try:
+                    cObj = None
+                    for cN in ["all_atoms", "backbone"]:
+                        ch = el.find(cN)
+                        abbrev = "aa" if cN == "all_atoms" else "bb"
+                        if ch:
+                            gId = "atom_inclusion_%s" % cN
+                            gdId = "d_ai_%s" % abbrev
+                            dL = self.__getGraphDataElements(ch, graphDataId=gdId)
+                            cgD = self.__getCommonGraphAttributes(ch)
+                            if dL and cgD:
+                                iRow = infObj.getRowCount()
+                                for k, v in cgD.items():
+                                    infObj.setValue(v, k, iRow)
+                                infObj.setValue(gId, "graph_id", iRow)
+                                infObj.setValue(gdId, "graph_data_id", iRow)
+                                #
+                                if not cObj:
+                                    cObj = DataCategory("pdbx_vrpt_em_graph_atom_inclusion", attributeNameList=["graph_id", "type"])
+                                tRow = cObj.getRowCount()
+                                cObj.setValue(gId, "graph_id", tRow)
+                                cObj.setValue(cN, "type", tRow)
+                                graphDataL.extend(dL)
+                    if cObj.getRowCount():
+                        rL.append(cObj)
+                except Exception as e:
+                    logger.exception("Failing with %s", str(e))
+            elif el.tag == "fsc":
+                for ch in el:
+                    logger.debug("-- Child fsc element tag %r attrib count (%d): %r", ch.tag, len(list(ch.attrib.keys())), list(ch.attrib.keys()))
+                    if ch.tag == "resolution_intersections":
+                        try:
+                            atList = ["ordinal", "resolution_units", "spatial_frequency_units", "correlation", "resolution", "spatial_frequency", "curve", "type"]
+                            rObj = DataCategory("pdbx_vrpt_em_resolution_intersections", atList)
+                            ru = ch.attrib["resolution_unit"] if "resolution_unit" in ch.attrib else "?"
+                            sfu = ch.attrib["spatial_frequency_unit"] if "spatial_frequency_unit" in ch.attrib else "?"
+                            ii = 0
+                            for gch in ch:
+                                if gch.tag == "intersection":
+                                    for at in ["correlation", "resolution", "spatial_frequency", "curve", "type"]:
+                                        atV = gch.attrib[at] if at in gch.attrib else "?"
+                                        rObj.setValue(atV, at, ii)
+                                    rObj.setValue(ru, "resolution_units", ii)
+                                    rObj.setValue(sfu, "spatial_frequency_units", ii)
+                                    rObj.setValue(ii + 1, "ordinal", ii)
+                                    ii += 1
+                            if rObj.getRowCount():
+                                rL.append(rObj)
+                        except Exception as e:
+                            logger.exception("Failing with %s", str(e))
+                    elif ch.tag == "fsc_curves":
+                        try:
+                            iCount = 0
+                            cObj = None
+                            for gch in ch:
+                                if gch.tag == "fsc_curve":
+                                    iCount += 1
+                                    gdId = "fsc_%d" % iCount
+                                    dL = self.__getGraphDataElements(gch, graphDataId=gdId)
+                                    cgD = self.__getCommonGraphAttributes(gch)
+                                    curveName = gch.attrib["curve_name"] if "curve_name" in gch.attrib else "?"
+                                    gId = curveName
+                                    fscType = gch.attrib["type"] if "type" in gch.attrib else "?"
+                                    if dL and cgD and curveName != "?":
+                                        iRow = infObj.getRowCount()
+                                        for k, v in cgD.items():
+                                            infObj.setValue(v, k, iRow)
+                                        #
+                                        infObj.setValue(gId, "graph_id", iRow)
+                                        infObj.setValue(gdId, "graph_data_id", iRow)
+                                        #
+                                        iRow = iCount - 1
+                                        if not cObj:
+                                            cObj = DataCategory("pdbx_vrpt_em_graph_fsc_curve", attributeNameList=["graph_id", "type", "curve_name"])
+                                        cObj.setValue(gId, "graph_id", iRow)
+                                        cObj.setValue(fscType, "type", iRow)
+                                        cObj.setValue(curveName, "curve_name", iRow)
+                                        graphDataL.extend(dL)
+                            if cObj:
+                                rL.append(cObj)
+                        except Exception as e:
+                            logger.exception("Failing with %s", str(e))
+
+                    elif ch.tag == "fsc_indicator_curves":
+                        try:
+                            iCount = 0
+                            cObj = None
+                            for gch in ch:
+
+                                if gch.tag == "fsc_indicator_curve":
+                                    iCount += 1
+                                    gdId = "fsc_i_%d" % iCount
+                                    dL = self.__getGraphDataElements(gch, graphDataId=gdId)
+                                    cgD = self.__getCommonGraphAttributes(gch)
+                                    curveName = gch.attrib["curve_name"] if "curve_name" in gch.attrib else "?"
+                                    gId = curveName
+                                    fscType = gch.attrib["type"] if "type" in gch.attrib else "?"
+                                    dataCurveName = gch.attrib["data_curve"] if "data_curve" in gch.attrib else "?"
+                                    if dL and cgD and curveName != "?" and dataCurveName != "?":
+                                        iRow = infObj.getRowCount()
+                                        for k, v in cgD.items():
+                                            infObj.setValue(v, k, iRow)
+                                        #
+                                        infObj.setValue(gId, "graph_id", iRow)
+                                        infObj.setValue(gdId, "graph_data_id", iRow)
+                                        #
+                                        iRow = iCount - 1
+                                        if not cObj:
+                                            cObj = DataCategory("pdbx_vrpt_em_graph_fsc_indicator_curve", attributeNameList=["graph_id", "type", "curve_name", "data_curve_name"])
+                                        cObj.setValue(gId, "graph_id", iRow)
+                                        cObj.setValue(fscType, "type", iRow)
+                                        cObj.setValue(curveName, "curve_name", iRow)
+                                        cObj.setValue(dataCurveName, "data_curve_name", iRow)
+                                        graphDataL.extend(dL)
+                            if cObj:
+                                rL.append(cObj)
+                        except Exception as e:
+                            logger.exception("Failing with %s", str(e))
+
+            #
+            # -- end of element processing
+
+        # -------
+        if infObj.getRowCount():
+            rL.append(infObj)
+            #
+            dObj = DataCategory("pdbx_vrpt_em_2d_graph_data", ["ordinal", "graph_data_id", "x_value", "y_value"])
+            for ii, dD in enumerate(graphDataL):
+                for k, v in dD.items():
+                    dObj.setValue(v, k, ii)
+                dObj.setValue(ii + 1, "ordinal", ii)
+            rL.append(dObj)
+
+        return rL
+
+    def __getCommonGraphAttributes(self, el):
+        """ Get common EM 2D graph attributes from the input element.
+
+        Args:
+            el (obj): ElementTree element (2D graph element)
+
+        Returns:
+            (dict): {'title': , 'x_axis_title': , 'x_axis_scale':, 'x_axis_units':, ... for y-axis}
+
+        """
+        rD = {}
+        rD["title"] = el.attrib["Title"] if "Title" in el.attrib else "?"
+        rD["x_axis_title"] = el.attrib["xTitle"] if "xTitle" in el.attrib else "?"
+        rD["x_axis_scale"] = el.attrib["xScale"] if "xScale" in el.attrib else "?"
+        rD["x_axis_units"] = el.attrib["xUnit"] if "xUnit" in el.attrib else "?"
+        rD["y_axis_title"] = el.attrib["yTitle"] if "yTitle" in el.attrib else "?"
+        rD["y_axis_scale"] = el.attrib["yScale"] if "yScale" in el.attrib else "?"
+        rD["y_axis_units"] = el.attrib["yUnit"] if "yUnit" in el.attrib else "?"
+        return rD
+
+    def __getGraphDataElements(self, pEl, graphDataId="g_1"):
+        """Extract graph data elements and append these to input data list.
+
+        Args:
+            pEl ([type]): [description]
+            graphDataId ([type]): [description]
+
+        Returns:
+            (list): updated input graphDataL
+        """
+        rL = []
+        for ch in pEl:
+            if ch.tag == "coordinate":
+                try:
+                    tD = {"graph_data_id": graphDataId, "x_value": ch.attrib["x"], "y_value": ch.attrib["y"]}
+                    rL.append(tD)
+                except Exception as e:
+                    logger.exception("Failing with %s", str(e))
+        return rL
 
     def __traverse(self, xrt, ns):
         """ Internal routine to traverse the dom covering/logging all elements and attributes.

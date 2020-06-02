@@ -5,6 +5,7 @@
 # Version: 0.001
 #
 # Update:
+#   2-Jun-2020 jdw Add V4 EM test case
 #
 #
 ##
@@ -36,10 +37,12 @@ class ValidationReportProviderTests(unittest.TestCase):
     def setUp(self):
         self.__dirPath = os.path.join(os.path.dirname(TOPDIR), "rcsb", "mock-data")
         self.__workPath = os.path.join(HERE, "test-output")
-        self.__exampleFileXray = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "cb", "1cbs", "1cbs_validation.xml.gz")
+        self.__exampleFileXray = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "re", "3rer", "3rer_validation.xml.gz")
         self.__cifFileXray = os.path.join(self.__workPath, "1cbs_validation.cif")
         self.__exampleFileNmr = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "dr", "6drg", "6drg_validation.xml.gz")
         self.__cifFileNmr = os.path.join(self.__workPath, "6drg_validation.cif")
+        self.__exampleFilEm = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "a3", "5a32", "5a32_validation.xml.gz")
+        self.__cifFileEm = os.path.join(self.__workPath, "5a32_validation.cif")
 
     def tearDown(self):
         pass
@@ -51,11 +54,19 @@ class ValidationReportProviderTests(unittest.TestCase):
         cL = mU.doImport(self.__exampleFileXray, fmt="xml", marshalHelper=vrd.toCif)
         ok = mU.doExport(self.__cifFileXray, cL, fmt="mmcif")
         self.assertTrue(ok)
+        #
         vpr = ValidationReportProvider(dirPath=os.path.join(self.__workPath, "vprt"), useCache=True, cleaCache=False)
         vrd = vpr.getReader()
         xrt = mU.doImport(self.__exampleFileNmr, fmt="xml")
         cL = vrd.toCif(xrt)
         ok = mU.doExport(self.__cifFileNmr, cL, fmt="mmcif")
+        self.assertTrue(ok)
+        #
+        vpr = ValidationReportProvider(dirPath=os.path.join(self.__workPath, "vprt"), useCache=True, cleaCache=False)
+        vrd = vpr.getReader()
+        xrt = mU.doImport(self.__exampleFilEm, fmt="xml")
+        cL = vrd.toCif(xrt)
+        ok = mU.doExport(self.__cifFileEm, cL, fmt="mmcif")
         self.assertTrue(ok)
 
 

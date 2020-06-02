@@ -1,0 +1,655 @@
+##
+# File: em_validation_ext.dic
+# Date: 31-May-2020
+# Version: v004
+#
+# Definitions manually adapted from wwpdb_validation_v004.xsd xsd schema to
+# handle 2D graph related graph elements
+#
+##
+##
+save_pdbx_vrpt_em_graph_fsc_indicator_curve
+   _category.id              pdbx_vrpt_em_graph_fsc_indicator_curve
+   _category.description
+;   EM validation report 2D plot of Fourier Shell Correlation (fsc) indicator curve
+;
+   _category.mandatory_code  no
+   #
+   _category_key.name  "_pdbx_vrpt_em_graph_fsc_indicator_curve.graph_id"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_graph_fsc_indicator_curve
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+
+save__pdbx_vrpt_em_graph_fsc_indicator_curve.graph_id
+   _item_description.description
+;     A unique identifier for a EM validation report 2D graph.
+;
+   _item.name            "_pdbx_vrpt_em_graph_fsc_indicator_curve.graph_id"
+   _item.category_id      pdbx_vrpt_em_graph_fsc_indicator_curve
+   _item.mandatory_code  yes
+   #
+   _item_type.code  line
+   #
+   _item_linked.child_name   "_pdbx_vrpt_em_graph_fsc_indicator_curve.graph_id"
+   _item_linked.parent_name  "_pdbx_vrpt_em_graph_info.graph_id"
+save_
+
+save__pdbx_vrpt_em_graph_fsc_indicator_curve.type
+   _item_description.description
+;     The fsc indicator curve type  (e.g. threshold).
+;
+   _item.name            "_pdbx_vrpt_em_graph_fsc_indicator_curve.type"
+   _item.category_id      pdbx_vrpt_em_graph_fsc_indicator_curve
+   _item.mandatory_code  yes
+   _item_type.code  line
+   #
+save_
+
+save__pdbx_vrpt_em_graph_fsc_indicator_curve.curve_name
+   _item_description.description
+;     The fsc indicator curve name.
+;
+   _item.name            "_pdbx_vrpt_em_graph_fsc_indicator_curve.curve_name"
+   _item.category_id      pdbx_vrpt_em_graph_fsc_indicator_curve
+   _item.mandatory_code  yes
+   _item_type.code  line
+   #
+save_
+
+save__pdbx_vrpt_em_graph_fsc_indicator_curve.data_curve_name
+   _item_description.description
+;     The fsc data (curve_name) used to calculate this fsc indicator curve.
+;
+   _item.name            "_pdbx_vrpt_em_graph_fsc_indicator_curve.data_curve_name"
+   _item.category_id      pdbx_vrpt_em_graph_fsc_indicator_curve
+   _item.mandatory_code  yes
+   _item_type.code  line
+   #
+save_
+##
+save_pdbx_vrpt_em_graph_fsc_curve
+   _category.id              pdbx_vrpt_em_graph_fsc_curve
+   _category.description
+;   EM validation report 2D plot of Fourier Shell Correlation (fsc) curve
+;
+   _category.mandatory_code  no
+   #
+   _category_key.name  "_pdbx_vrpt_em_graph_fsc_curve.graph_id"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_graph_fsc_curve
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+
+save__pdbx_vrpt_em_graph_fsc_curve.graph_id
+   _item_description.description
+;     A unique identifier for a EM validation report 2D graph.
+;
+   _item.name            "_pdbx_vrpt_em_graph_fsc_curve.graph_id"
+   _item.category_id      pdbx_vrpt_em_graph_fsc_curve
+   _item.mandatory_code  yes
+   #
+   _item_type.code  line
+   #
+   _item_linked.child_name   "_pdbx_vrpt_em_graph_fsc_curve.graph_id"
+   _item_linked.parent_name  "_pdbx_vrpt_em_graph_info.graph_id"
+save_
+
+save__pdbx_vrpt_em_graph_fsc_curve.type
+   _item_description.description
+;     The fsc curve type (e.g. half_map to half_map fsc).
+;
+   _item.name            "_pdbx_vrpt_em_graph_fsc_curve.type"
+   _item.category_id      pdbx_vrpt_em_graph_fsc_curve
+   _item.mandatory_code  yes
+   _item_type.code  line
+   #
+save_
+
+save__pdbx_vrpt_em_graph_fsc_curve.curve_name
+   _item_description.description
+;     The fsc curve name.
+;
+   _item.name            "_pdbx_vrpt_em_graph_fsc_curve.curve_name"
+   _item.category_id      pdbx_vrpt_em_graph_fsc_curve
+   _item.mandatory_code  yes
+   _item_type.code  line
+   #
+save_
+##
+##
+save_pdbx_vrpt_em_resolution_intersections
+   _category.id              pdbx_vrpt_em_resolution_intersections
+   _category.description
+;   EM validation report intersections between fsc_curves and their corresponding fsc_indicator_curves
+;
+   _category.mandatory_code  no
+   _category_key.name  "_pdbx_vrpt_em_resolution_intersections.ordinal"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_resolution_intersections
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+
+save__pdbx_vrpt_em_resolution_intersections.ordinal
+   _item_description.description  "Uniquely identifies each instance of data in this category."
+   #
+   _item.name            "_pdbx_vrpt_em_resolution_intersections.ordinal"
+   _item.category_id     pdbx_vrpt_em_resolution_intersections
+   _item.mandatory_code  yes
+   _item_type.code  int
+   #
+save_
+
+save__pdbx_vrpt_em_resolution_intersections.resolution_units
+   _item_description.description  "Units of resolution."
+   #
+   _item.name            "_pdbx_vrpt_em_resolution_intersections.resolution_units"
+   _item.category_id     pdbx_vrpt_em_resolution_intersections
+   _item.mandatory_code  no
+   _item_type.code  code
+   _item_default.value 'A'
+   #
+save_
+
+save__pdbx_vrpt_em_resolution_intersections.spatial_frequency_units
+   _item_description.description  "Units of spatial frequency."
+   #
+   _item.name            "_pdbx_vrpt_em_resolution_intersections.spatial_frequency_units"
+   _item.category_id     pdbx_vrpt_em_resolution_intersections
+   _item.mandatory_code  no
+   _item_type.code  code
+   _item_default.value '1/A'
+   #
+save_
+
+save__pdbx_vrpt_em_resolution_intersections.correlation
+   _item_description.description  "fsc intersection correlation."
+   #
+   _item.name            "_pdbx_vrpt_em_resolution_intersections.spatial_frequency_units"
+   _item.category_id     pdbx_vrpt_em_resolution_intersections
+   _item.mandatory_code  no
+    _item_type.code  float3
+       #
+save_
+
+save__pdbx_vrpt_em_resolution_intersections.resolution
+   _item_description.description  "fsc intersection resolution."
+   #
+   _item.name            "_pdbx_vrpt_em_resolution_intersections.resolution"
+   _item.category_id     pdbx_vrpt_em_resolution_intersections
+   _item.mandatory_code  no
+   _item_type.code  float3
+   #
+save_
+
+save__pdbx_vrpt_em_resolution_intersections.spatial_frequency
+   _item_description.description  "fsc intersection spatial frequency."
+   #
+   _item.name            "_pdbx_vrpt_em_resolution_intersections.resolution"
+   _item.category_id     pdbx_vrpt_em_resolution_intersections
+   _item.mandatory_code  yes
+   _item_type.code  float3
+   #
+save_
+
+save__pdbx_vrpt_em_resolution_intersections.curve
+   _item_description.description  "fsc curve name."
+   #
+   _item.name            "_pdbx_vrpt_em_resolution_intersections.curve"
+   _item.category_id     pdbx_vrpt_em_resolution_intersections
+   _item.mandatory_code  yes
+   _item_type.code  line
+   #
+save_
+
+save__pdbx_vrpt_em_resolution_intersections.type
+   _item_description.description  "fsc curve type."
+   #
+   _item.name            "_pdbx_vrpt_em_resolution_intersections.type"
+   _item.category_id     pdbx_vrpt_em_resolution_intersections
+   _item.mandatory_code  yes
+   _item_type.code  line
+   #
+save_
+
+##
+save_pdbx_vrpt_em_graph_map_value_distribution
+   _category.id              pdbx_vrpt_em_graph_map_value_distribution
+   _category.description
+;   EM validation report 2D map value distribution graph for the primary map.
+;
+   _category.mandatory_code  no
+   #
+   _category_key.name  "_pdbx_vrpt_em_graph_map_value_distribution.graph_id"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_graph_map_value_distribution
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+
+save__pdbx_vrpt_em_graph_map_value_distribution.graph_id
+   _item_description.description
+;     A unique identifier for a EM validation report 2D graph.
+;
+   _item.name            "_pdbx_vrpt_em_graph_map_value_distribution.graph_id"
+   _item.category_id      pdbx_vrpt_em_graph_map_value_distribution
+   _item.mandatory_code  yes
+   #
+   _item_type.code  line
+   #
+   _item_linked.child_name   "_pdbx_vrpt_em_graph_map_value_distribution.graph_id"
+   _item_linked.parent_name  "_pdbx_vrpt_em_graph_info.graph_id"
+save_
+##
+##
+save_pdbx_vrpt_em_graph_rotationally_averaged_power_spectrum
+   _category.id              pdbx_vrpt_em_graph_rotationally_averaged_power_spectrum
+   _category.description
+;   EM validation report 2D rotationally averaged power spectrum for the primary map.
+;
+   _category.mandatory_code  no
+   #
+   _category_key.name  "_pdbx_vrpt_em_graph_rotationally_averaged_power_spectrum.graph_id"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_graph_rotationally_averaged_power_spectrum
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+
+save__pdbx_vrpt_em_graph_rotationally_averaged_power_spectrum.graph_id
+   _item_description.description
+;     A unique identifier for a EM validation report 2D graph.
+;
+   _item.name            "_pdbx_vrpt_em_graph_rotationally_averaged_power_spectrum.graph_id"
+   _item.category_id      pdbx_vrpt_em_graph_rotationally_averaged_power_spectrum
+   _item.mandatory_code  yes
+   #
+   _item_type.code  line
+   #
+   _item_linked.child_name   "_pdbx_vrpt_em_graph_rotationally_averaged_power_spectrum.graph_id"
+   _item_linked.parent_name  "_pdbx_vrpt_em_graph_info.graph_id"
+save_
+
+##
+##
+save_pdbx_vrpt_em_graph_volume_estimate
+   _category.id              pdbx_vrpt_em_graph_volume_estimate
+   _category.description
+;   EM validation report 2D volume estimate for the primary map
+;
+   _category.mandatory_code  no
+   _category_key.name  "_pdbx_vrpt_em_graph_volume_estimate.graph_id"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_graph_volume_estimate
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+
+save__pdbx_vrpt_em_graph_volume_estimate.graph_id
+   _item_description.description
+;     A unique identifier for a EM validation report 2D graph.
+;
+   _item.name            "_pdbx_vrpt_em_graph_volume_estimate.graph_id"
+   _item.category_id      pdbx_vrpt_em_graph_volume_estimate
+   _item.mandatory_code  yes
+   _item_type.code  line
+   #
+   _item_linked.child_name   "_pdbx_vrpt_em_graph_volume_estimate.graph_id"
+   _item_linked.parent_name  "_pdbx_vrpt_em_graph_info.graph_id"
+save_
+##
+
+##
+##
+save_pdbx_vrpt_em_graph_atom_inclusion
+   _category.id              pdbx_vrpt_em_graph_atom_inclusion
+   _category.description
+;   EM validation report 2D plot of atom inclusion for the primary map
+;
+   _category.mandatory_code  no
+   #
+   loop_
+   _category_key.name  "_pdbx_vrpt_em_2d_graph_data.graph_id"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_graph_atom_inclusion
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+
+##
+save__pdbx_vrpt_em_graph_atom_inclusion.graph_id
+   _item_description.description
+;     A unique identifier for a EM validation report 2D graph.
+;
+   _item.name            "_pdbx_vrpt_em_graph_atom_inclusion.graph_id"
+   _item.category_id      pdbx_vrpt_em_graph_atom_inclusion
+   _item.mandatory_code  yes
+   #
+   _item_type.code  line
+   #
+   _item_linked.child_name   "_pdbx_vrpt_em_graph_atom_inclusion.graph_id"
+   _item_linked.parent_name  "_pdbx_vrpt_em_graph_info.graph_id"
+save_
+
+save__pdbx_vrpt_em_graph_atom_inclusion.type
+   _item_description.description
+;     The atom type subset for this graph
+;
+   _item.name            "_pdbx_vrpt_em_graph_atom_inclusion.graph_id"
+   _item.category_id      pdbx_vrpt_em_graph_atom_inclusion
+   _item.mandatory_code  yes
+   #
+   _item_type.code  line
+   #
+   loop_
+   _item_enumeration.value
+   _item_enumeration.detail
+      all_atoms        'Containing the data required to plot the atom inclusion for for all atoms.'
+      backbone         'Containing the data required to plot the atom inclusion for the backbone.'
+save_
+## ---
+##
+##
+save_pdbx_vrpt_em_details
+   _category.id              pdbx_vrpt_em_details
+   _category.description
+;   pdbx_vrpt_em_details contains general .
+;
+   _category.mandatory_code  no
+   _category_key.name  "_pdbx_vrpt_em_2d_graph_data.ordinal"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_details
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+
+save__pdbx_vrpt_em_details.ordinal
+   _item_description.description  "Uniquely identifies each instance of data in this category."
+   #
+   _item.name            "_pdbx_vrpt_em_details.ordinal"
+   _item.category_id     pdbx_vrpt_em_details
+   _item.mandatory_code  yes
+   _item_type.code  int
+   #
+save_
+
+save__pdbx_vrpt_em_details.recommended_contour_level
+   _item_description.description  "Recommended contour level for the primary map of this entry."
+   #
+   _item.name            "_pdbx_vrpt_em_2d_graph_data.x_value"
+   _item.category_id     pdbx_vrpt_em_2d_graph_data
+   _item.mandatory_code  yes
+   _item_type.code  float
+   _item_aliases.alias_name  Entry.RecommendedContourLevel
+   _item_aliases.dictionary  http://wwpdb.org/validation/schema/wwpdb_validation_v004.xsd
+   _item_aliases.version     V004
+   #
+save_
+
+
+##
+##
+save_pdbx_vrpt_em_2d_graph_data
+   _category.id              pdbx_vrpt_em_2d_graph_data
+   _category.description
+;   pdbx_vrpt_em_2d_graph_data contains the data contents for EM validation report 2D graphs.
+;
+   _category.mandatory_code  no
+   #
+   loop_
+   _category_key.name  "_pdbx_vrpt_em_2d_graph_data.ordinal"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_2d_graph_data
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_data.ordinal
+   _item_description.description  "Uniquely identifies each instance of data in this category."
+   #
+   _item.name            "_pdbx_vrpt_em_2d_graph_data.ordinal"
+   _item.category_id     pdbx_vrpt_em_2d_graph_data
+   _item.mandatory_code  yes
+   _item_type.code  int
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_data.graph_data_id
+   _item_description.description  "A reference to the 2D graph containing this item of data."
+   #
+   _item.name            "_pdbx_vrpt_em_2d_graph_data.ordinal"
+   _item.category_id     pdbx_vrpt_em_2d_graph_data
+   _item.mandatory_code  yes
+   _item_type.code  int
+   #
+   _item_linked.child_name  "_pdbx_vrpt_em_2d_graph_data.graph_data_id"
+   _item_linked.parent_name "_pdbx_vrpt_em_2d_graph_info.graph_data_id"
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_data.x_value
+   _item_description.description  "Data X-value."
+   #
+   _item.name            "_pdbx_vrpt_em_2d_graph_data.x_value"
+   _item.category_id     pdbx_vrpt_em_2d_graph_data
+   _item.mandatory_code  yes
+   _item_type.code  float
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_data.y_value
+   _item_description.description  "Data Y-value."
+   #
+   _item.name            "_pdbx_vrpt_em_2d_graph_data.y_value"
+   _item.category_id     pdbx_vrpt_em_2d_graph_data
+   _item.mandatory_code  yes
+   _item_type.code  float
+   #
+save_
+
+##
+##
+save_pdbx_vrpt_em_2d_graph_info
+   _category.id              pdbx_vrpt_em_2d_graph_info
+   _category.description
+;   pdbx_vrpt_em_2d_graph_info contains common details for representation of EM validation report 2D graphs.
+;
+   _category.mandatory_code  no
+   #
+   loop_
+   _category_key.name  "_pdbx_vrpt_em_2d_graph_info.graph_id"
+   #
+    loop_
+    _category_group.id
+     inclusive_group
+     validation_report_group
+   #
+   _pdbx_category_context.category_id  pdbx_vrpt_em_2d_graph_info
+   _pdbx_category_context.type         RCSB_LOCAL
+   #
+save_
+#
+save__pdbx_vrpt_em_2d_graph_info.graph_data_id
+   _item_description.description
+;     An identifier for the data set associated with this 2D graph.
+;
+   _item.name            "_pdbx_vrpt_em_2d_graph_info.graph_data_id"
+   _item.category_id     pdbx_vrpt_em_2d_graph_info
+   _item.mandatory_code  yes
+   _item_type.code  line
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_info.graph_id
+   _item_description.description
+;     A unique identifier for a EM validation report 2D graph.
+;
+   _item.name            "_pdbx_vrpt_em_2d_graph_info.graph_data_id"
+   _item.category_id     pdbx_vrpt_em_2d_graph_info
+   _item.mandatory_code  yes
+   #
+   _item_type.code  line
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_info.title
+   _item_description.description
+;  2D graph title.
+;
+   _item.name            "_pdbx_vrpt_em_2d_graph_info.title"
+   _item.category_id     pdbx_vrpt_em_2d_graph_info
+   _item.mandatory_code  no
+   #
+   _item_type.code  text
+   #
+   _item_aliases.alias_name  EM_validation.graph.Title
+   _item_aliases.dictionary  http://wwpdb.org/validation/schema/wwpdb_validation_v004.xsd
+   _item_aliases.version     V004
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_info.x_axis_title
+   _item_description.description
+;  2D graph X-axis title.
+;
+   _item.name            "_pdbx_vrpt_em_2d_graph_info.x_axis_title"
+   _item.category_id     pdbx_vrpt_em_2d_graph_info
+   _item.mandatory_code  yes
+   #
+   _item_type.code  text
+   #
+   _item_aliases.alias_name  EM_validation.graph.xTitle
+   _item_aliases.dictionary  http://wwpdb.org/validation/schema/wwpdb_validation_v004.xsd
+   _item_aliases.version     V004
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_info.x_axis_scale
+   _item_description.description
+; 2D graph X-axis scale. (linear if not provided)
+;
+   _item.name            "_pdbx_vrpt_em_2d_graph_info.x_axis_scale"
+   _item.category_id     pdbx_vrpt_em_2d_graph_info
+   _item.mandatory_code  no
+   #
+   _item_type.code  text
+   #
+   _item_aliases.alias_name  EM_validation.graph.xScale
+   _item_aliases.dictionary  http://wwpdb.org/validation/schema/wwpdb_validation_v004.xsd
+   _item_aliases.version     V004
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_info.x_axis_units
+   _item_description.description
+; 2D graph X-axis units. (arbitrary if not provided)
+;
+   _item.name            "_pdbx_vrpt_em_2d_graph_info.x_axis_units"
+   _item.category_id     pdbx_vrpt_em_2d_graph_info
+   _item.mandatory_code  no
+   #
+   _item_type.code  text
+   #
+   _item_aliases.alias_name  EM_validation.graph.xUnit
+   _item_aliases.dictionary  http://wwpdb.org/validation/schema/wwpdb_validation_v004.xsd
+   _item_aliases.version     V004
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_info.y_axis_title
+   _item_description.description
+;  2D graph Y-axis title.
+;
+   _item.name            "_pdbx_vrpt_em_2d_graph_info.y_axis_title"
+   _item.category_id     pdbx_vrpt_em_2d_graph_info
+   _item.mandatory_code  yes
+   #
+   _item_type.code  text
+   #
+   _item_aliases.alias_name  EM_validation.graph.xTitle
+   _item_aliases.dictionary  http://wwpdb.org/validation/schema/wwpdb_validation_v004.xsd
+   _item_aliases.version     V004
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_info.y_axis_scale
+   _item_description.description
+; 2D graph Y-axis scale. (linear if not provided)
+;
+   _item.name            "_pdbx_vrpt_em_2d_graph_info.y_axis_scale"
+   _item.category_id     pdbx_vrpt_em_2d_graph_info
+   _item.mandatory_code  no
+   #
+   _item_type.code  text
+   #
+   _item_aliases.alias_name  EM_validation.graph.xScale
+   _item_aliases.dictionary  http://wwpdb.org/validation/schema/wwpdb_validation_v004.xsd
+   _item_aliases.version     V004
+   #
+save_
+
+save__pdbx_vrpt_em_2d_graph_info.y_axis_units
+   _item_description.description
+; 2D graph X-axis units. (arbitrary if not provided)
+;
+   _item.name            "_pdbx_vrpt_em_2d_graph_info.y_axis_units"
+   _item.category_id     pdbx_vrpt_em_2d_graph_info
+   _item.mandatory_code  no
+   #
+   _item_type.code  text
+   #
+   _item_aliases.alias_name  EM_validation.graph.xUnit
+   _item_aliases.dictionary  http://wwpdb.org/validation/schema/wwpdb_validation_v004.xsd
+   _item_aliases.version     V004
+   #
+save_
+
+

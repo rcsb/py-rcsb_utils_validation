@@ -5,7 +5,7 @@
 # Version: 0.001
 #
 # Update:
-#
+#   1-Jun-2020 jdw updated to V4 with EM extensions
 #
 ##
 """
@@ -36,14 +36,18 @@ logger = logging.getLogger()
 class ValidationReportReaderTests(unittest.TestCase):
     def setUp(self):
         self.__mU = MarshalUtil()
-        self.__dirPath = os.path.join(os.path.dirname(TOPDIR), "rcsb", "mock-data")
-
-        self.__exampleFileXray = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "cb", "1cbs", "1cbs_validation.xml.gz")
-        self.__cifFileXray = os.path.join(HERE, "test-output", "1cbs_validation.cif")
-        self.__exampleFileNmr = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "dr", "6drg", "6drg_validation.xml.gz")
-        self.__cifFileNmr = os.path.join(HERE, "test-output", "6drg_validation.cif")
-
-        self.__dictionaryMapPath = os.path.join(HERE, "test-data", "vrpt_dictmap.json")
+        self.__dirPath = os.path.join(HERE, "test-data")
+        self.__workPath = os.path.join(HERE, "test-output")
+        self.__exampleFileXray = os.path.join(self.__dirPath, "3rer_validation.xml")
+        self.__cifFileXray = os.path.join(self.__workPath, "3rer_validation.cif")
+        #
+        self.__exampleFileNmr = os.path.join(self.__dirPath, "6drg_validation.xml")
+        self.__cifFileNmr = os.path.join(self.__workPath, "6drg_validation.cif")
+        #
+        self.__exampleFileEm = os.path.join(self.__dirPath, "5a32_validation.xml")
+        self.__cifFileEm = os.path.join(self.__workPath, "5a32_validation.cif")
+        #
+        self.__dictionaryMapPath = os.path.join(HERE, "test-data", "vrpt_dictmap_v4.json")
         self.__dictionaryMap = self.__mU.doImport(self.__dictionaryMapPath, fmt="json")
 
     def tearDown(self):
@@ -63,11 +67,19 @@ class ValidationReportReaderTests(unittest.TestCase):
         ok = self.__mU.doExport(self.__cifFileNmr, cL, fmt="mmcif")
         self.assertTrue(ok)
 
+    def testReadEmValidationReport(self):
+        vrr = ValidationReportReader(self.__dictionaryMap)
+        xrt = self.__mU.doImport(self.__exampleFileEm, fmt="xml")
+        cL = vrr.toCif(xrt)
+        ok = self.__mU.doExport(self.__cifFileEm, cL, fmt="mmcif")
+        self.assertTrue(ok)
+
 
 def readValidationReport():
     suiteSelect = unittest.TestSuite()
     suiteSelect.addTest(ValidationReportReaderTests("testReadXrayValidationReport"))
     suiteSelect.addTest(ValidationReportReaderTests("testReadNmrValidationReport"))
+    suiteSelect.addTest(ValidationReportReaderTests("testReadEmValidationReport"))
     return suiteSelect
 
 

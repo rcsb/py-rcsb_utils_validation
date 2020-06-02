@@ -41,14 +41,36 @@ class ValidationReportSchemaUtils(object):
         #
         # Schema provenance -
         #
-        self.__schemaPath = "http://wwpdb.org/validation/schema/wwpdb_validation_v003.xsd"
-        self.__schemaVersion = "V003"
+        self.__schemaPath = "http://wwpdb.org/validation/schema/wwpdb_validation_v004.xsd"
+        self.__schemaVersion = "V004"
+        # EM elements that do not follow the conventional schema patterns.
+        self.__elementsIgnoreV4 = [
+            "EM_validation",
+            "RecommendedContourLevel",
+            "coordinate",
+            "map_value_distribution",
+            "rotationally_averaged_power_spectrum",
+            "volume_estimate",
+            "atom_inclusion",
+            "all_atoms",
+            "backbone",
+            "fsc",
+            "fsc_curves",
+            "fsc_indicator_curves",
+            "resolution_intersections",
+            "intersection",
+            "fsc_curves",
+            "fsc_curve",
+            "fsc_indicator_curves",
+            "fsc_indicator_curve",
+        ]
+
         #
         # Translated dictionary provenance -
         #
         self.__dictName = "vrpt_mmcif_ext.dic"
         self.__dictDescription = "wwPDB Validation Report extension dictionary"
-        self.__dictVersion = "0.003"
+        self.__dictVersion = "0.004"
         self.__updateDate = time.strftime("%Y-%m-%d", time.localtime())
         self.__updateComment = "Preliminary translated version"
         #
@@ -72,7 +94,7 @@ class ValidationReportSchemaUtils(object):
         # Inferred attributes that must be added to categories requiring molecular context (above)
         self.__contextAttributes = ["altcode", "chain", "ent", "model", "resname", "resnum", "said", "seq"]
         #
-        #  Category name mapping dictionary
+        #  Element to category name mapping dictionary
         #
         self.__catMappingD = {
             "wwPDB-validation-information": "pdbx_vrpt_info_notused",
@@ -105,7 +127,7 @@ class ValidationReportSchemaUtils(object):
         }
 
         #
-        # Attribute name mapping dictionary
+        # XML attribute to CIF attribute name mapping dictionary
         #
         self.__atMappingD = {
             "ordinal": "ordinal",
@@ -339,8 +361,29 @@ class ValidationReportSchemaUtils(object):
             "Zscore": "Zscore",
             "mindiff": "mindiff",
             "local_density": "local_density",
+            "emdb_id": "emdb_id",
+            "EMDB-deposition-date": "EMDB_deposition_date",
+            "EMDB-resolution": "EMDB_resolution",
+            "contour_level_primary_map": "contour_level_primary_map",
+            "atom_inclusion_all_atoms": "atom_inclusion_all_atoms",
+            "atom_inclusion_backbone": "atom_inclusion_backbone",
+            "author_provided_fsc_resolution_by_cutoff_0.143": "author_provided_fsc_resolution_by_cutoff_pt_143",
+            "author_provided_fsc_resolution_by_cutoff_0.333": "author_provided_fsc_resolution_by_cutoff_pt_333",
+            "author_provided_fsc_resolution_by_cutoff_0.5": "author_provided_fsc_resolution_by_cutoff_pt_5",
+            "author_provided_fsc_resolution_by_cutoff_halfbit": "author_provided_fsc_resolution_by_cutoff_halfbit",
+            "author_provided_fsc_resolution_by_cutoff_onebit": "author_provided_fsc_resolution_by_cutoff_onebit",
+            "author_provided_fsc_resolution_by_cutoff_threesigma": "author_provided_fsc_resolution_by_cutoff_threesigma",
+            "calculated_fsc_resolution_by_cutoff_0.143": "calculated_fsc_resolution_by_cutoff_pt_143",
+            "calculated_fsc_resolution_by_cutoff_0.333": "calculated_fsc_resolution_by_cutoff_pt_333",
+            "calculated_fsc_resolution_by_cutoff_0.5": "calculated_fsc_resolution_by_cutoff_pt_5",
+            "calculated_fsc_resolution_by_cutoff_halfbit": "calculated_fsc_resolution_by_cutoff_halfbit",
+            "calculated_fsc_resolution_by_cutoff_onebit": "calculated_fsc_resolution_by_cutoff_onebit",
+            "calculated_fsc_resolution_by_cutoff_threesigma": "calculated_fsc_resolution_by_cutoff_threesigma",
+            "residue_inclusion": "residue_inclusion",
+            "average_residue_inclusion": "average_residue_inclusion",
         }
         #
+        # Parent relationships that are added to dictionary definitions
         self.__parentD = {
             "auth_asym_id": ("atom_site", "auth_asym_id", "code"),
             "auth_seq_id": ("atom_site", "label_seq_id", "code"),
@@ -355,7 +398,7 @@ class ValidationReportSchemaUtils(object):
         #
 
     def buildDictionary(self, cD):
-        """
+        """ Create dictionary definitions from the input content dictionary.
 
         Args:
             cD (dict): input consolidated schema dictionary
@@ -368,15 +411,17 @@ class ValidationReportSchemaUtils(object):
         return cL
 
     def getDictionaryMap(self, cD, stringKey=True):
-        """
+        """ Create a utility mapping dictionary for between XML elements/attributes and
+            PDBx/mmCIF category and attribute names
 
         Args:
             cD (dict): input consolidated schema dictionary
 
         Returns:
-            containerList (obj list) container list containing definition content
+            (dict): category and attribute name mappings
         """
-        dictionaryMap = self.__exportdictionaryMapping(cD)
+        dictionaryMap = {"_update:": self.__updateDate, "_version": self.__schemaVersion, "_schema": self.__schemaPath}
+        dictionaryMap.update(self.__exportdictionaryMapping(cD))
         if stringKey:
             tD = dictionaryMap["attributes"]
             sD = {}
@@ -685,15 +730,16 @@ class ValidationReportSchemaUtils(object):
         """ Extract the data organization and type details from the  XSD schema file
             describing the wwPDB validation data file.
         """
+        elementsIgnore = self.__elementsIgnoreV4 if self.__schemaVersion == "V004" else []
         cD = {}
         ns = "{http://www.w3.org/2001/XMLSchema}"
         xrt = self.__parse(filePath)
         #
-        schD = self.__getSchema(xrt, ns)
+        schD = self.__getSchema(xrt, ns, elementsIgnore=elementsIgnore)
         atD, stD = self.__getAttributeAndTypeDefs(xrt, ns)
         if verbose:
             self.__dumpSchema(schD, atD, stD)
-            self.__traverseSchema(xrt, ns)
+            # self.__traverseSchema(xrt, ns)
         # - add synthetic ordinal  -
         atD["ordinal"] = {"name": "ordinal", "type": "xsd:integer", "description": "Uniquely identifies each instance of this category.", "mandatory": "mandatory"}
         #
@@ -902,7 +948,7 @@ class ValidationReportSchemaUtils(object):
 
         return rD
 
-    def __getSchema(self, elTree, ns):
+    def __getSchema(self, elTree, ns, elementsIgnore=None):
         """
         Traverse the schema tree from root and construct the schema hierarchy -
         Top-level named elements are mapped to category definitions
@@ -913,7 +959,7 @@ class ValidationReportSchemaUtils(object):
         for el in elTree.getroot():
             atD = el.attrib
             # Get named elements
-            if el.tag == "{ns}element".format(ns=ns) and "name" in atD:
+            if el.tag == "{ns}element".format(ns=ns) and "name" in atD and atD["name"] not in elementsIgnore:
                 pElD[atD["name"]] = self.__processParentEl(el, ns)
 
         return pElD
@@ -949,18 +995,27 @@ class ValidationReportSchemaUtils(object):
 
         """
         for elName in schD:
-            logger.info("Element name: %s", elName)
-            logger.debug("          >>> %r", schD[elName]["attributes"])
+            isMapped = elName in self.__catMappingD
+            if not isMapped:
+                if "attributes" in schD[elName]:
+                    logger.info("%r  unmapped attributes: %d", elName, len(schD[elName]["attributes"]))
+                else:
+                    logger.info("%r NO ATTRIBUTES FOR UNMAPPED ELEMENT", elName)
+            elif len(schD[elName]["attributes"]) < 1:
+                logger.info("%r NO ATTRIBUTES FOR MAPPED ELEMENT", elName)
 
         for ky in atD:
-            logger.info(">> attribute dictionary aD %s %r", ky, atD[ky].keys())
+            if ky not in self.__atMappingD:
+                logger.info("No mapping for attribute %r", ky)
+            if set(("name", "type", "description")) - set(atD[ky].keys()):
+                logger.info(">> attribute dictionary aD %s %r", ky, atD[ky].keys())
         for ky in stD:
             logger.info(">> simple type dictionary stD %s %r", ky, stD[ky].keys())
         #
         return True
 
     def __traverseSchema(self, xrt, ns):
-        """ Traverse the schema and covering/logging all elements and attributes.
+        """ Traverse the schema covering/logging all elements and attributes.
 
         Args:
             xrt (object): Elementree root object

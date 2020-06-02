@@ -5,7 +5,7 @@
 # Version: 0.001 Initial version
 #
 # Updates:
-#
+#  2-Jun-2020 jdw update with schema V4 mapping file
 ##
 """
 Resource provider for validation report reader and translator.

@@ -40,7 +40,7 @@ setup(
     ),
     entry_points={"console_scripts": []},
     #
-    install_requires=["mmcif >= 0.52", "rcsb.utils.io >= 0.63", "rcsb.utils.config >= 0.35"],
+    install_requires=["mmcif >= 0.54", "rcsb.utils.io >= 0.65", "rcsb.utils.config >= 0.35"],
     packages=find_packages(exclude=["rcsb.mock-data", "rcsb.utils.tests-validation", "rcsb.utils.tests-*", "tests.*"]),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
