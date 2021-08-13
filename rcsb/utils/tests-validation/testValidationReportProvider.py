@@ -39,10 +39,10 @@ class ValidationReportProviderTests(unittest.TestCase):
         self.__workPath = os.path.join(HERE, "test-output")
         self.__exampleFileXray = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "re", "3rer", "3rer_validation.xml.gz")
         self.__cifFileXray = os.path.join(self.__workPath, "1cbs_validation.cif")
-        self.__exampleFileNmr = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "dr", "6drg", "6drg_validation.xml.gz")
-        self.__cifFileNmr = os.path.join(self.__workPath, "6drg_validation.cif")
-        self.__exampleFilEm = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "a3", "5a32", "5a32_validation.xml.gz")
-        self.__cifFileEm = os.path.join(self.__workPath, "5a32_validation.cif")
+        self.__exampleFileNmr = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "ds", "1dsr", "1dsr_validation.xml.gz")
+        self.__cifFileNmr = os.path.join(self.__workPath, "1dsr_validation.cif")
+        self.__exampleFilEm = os.path.join(self.__dirPath, "MOCK_VALIDATION_REPORTS", "iy", "3iyd", "3iyd_validation.xml.gz")
+        self.__cifFileEm = os.path.join(self.__workPath, "3iyd_validation.cif")
 
     def tearDown(self):
         pass

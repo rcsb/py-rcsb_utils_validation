@@ -12,4 +12,5 @@
  3-Feb-2019 V0.20 Update dependencies for split config
 13-May-2020 V0.21 Update dependencies discontinue py27 pipeline
  2-Jun-2020 V0.22 Update for validation schema V004
+13-Aug-2021 V0.23 Adjustment to caching category and attribute data mappings and tests
 #

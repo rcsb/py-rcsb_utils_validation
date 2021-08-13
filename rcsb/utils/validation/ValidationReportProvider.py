@@ -28,8 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 class ValidationReportProvider(SingletonClass):
-    """ Resource provider for validation report reader and translator.
-    """
+    """Resource provider for validation report reader and translator."""
 
     def __init__(self, **kwargs):
         """Resource provider for validation report reader and translator.
@@ -45,6 +44,11 @@ class ValidationReportProvider(SingletonClass):
         dirPath = kwargs.get("dirPath", ".")
         useCache = kwargs.get("useCache", True)
         self.__mapD = self.__reload(urlTarget, dirPath, useCache=useCache)
+        if not (self.__mapD and "attributes" in self.__mapD and "categories" in self.__mapD):
+            logger.info("Retrying loading validation mapping data")
+            self.__mapD = self.__reload(urlTarget, dirPath, useCache=False)
+        #
+        logger.info("Loaded mapping attributes (%d) categories (%d)", len(self.__mapD["attributes"]), len(self.__mapD["categories"]))
         self.__reader = None
         logger.debug("Leaving constructor")
 
@@ -52,15 +56,15 @@ class ValidationReportProvider(SingletonClass):
         return self.__mapD and "categories" in self.__mapD and "attributes" in self.__mapD
 
     def __reload(self, urlTarget, dirPath, useCache=True):
-        """ Reload local cache of mapping resources to support validation report reader and translator.
+        """Reload local cache of mapping resources to support validation report reader and translator.
 
-            Args:
-                urlTarget (list, str): URL for schema mapping file
-                dirPath (str): path to the directory containing cache files
-                useCache (bool, optional): flag to use cached files. Defaults to True.
+        Args:
+            urlTarget (list, str): URL for schema mapping file
+            dirPath (str): path to the directory containing cache files
+            useCache (bool, optional): flag to use cached files. Defaults to True.
 
-            Returns:
-                (object): instance of ValidationReportReader()
+        Returns:
+            (object): instance of ValidationReportReader()
         """
         mapD = {}
         #
@@ -77,6 +81,7 @@ class ValidationReportProvider(SingletonClass):
                 except Exception:
                     pass
         #
+        logger.info("Loading validation mapping data in %s (useCache %r)", fn, useCache)
         if useCache and fU.exists(mappingFilePath):
             mapD = mU.doImport(mappingFilePath, fmt="json")
         else:
