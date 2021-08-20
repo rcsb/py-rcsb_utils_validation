@@ -45,10 +45,10 @@ class ValidationReportProvider(SingletonClass):
         useCache = kwargs.get("useCache", True)
         self.__mapD = self.__reload(urlTarget, dirPath, useCache=useCache)
         if not (self.__mapD and "attributes" in self.__mapD and "categories" in self.__mapD):
-            logger.info("Retrying loading validation mapping data")
+            logger.debug("Retrying loading validation mapping data")
             self.__mapD = self.__reload(urlTarget, dirPath, useCache=False)
         #
-        logger.info("Loaded mapping attributes (%d) categories (%d)", len(self.__mapD["attributes"]), len(self.__mapD["categories"]))
+        logger.debug("Loaded mapping attributes (%d) categories (%d)", len(self.__mapD["attributes"]), len(self.__mapD["categories"]))
         self.__reader = None
         logger.debug("Leaving constructor")
 
@@ -81,7 +81,7 @@ class ValidationReportProvider(SingletonClass):
                 except Exception:
                     pass
         #
-        logger.info("Loading validation mapping data in %s (useCache %r)", fn, useCache)
+        logger.debug("Loading validation mapping data in %s (useCache %r)", fn, useCache)
         if useCache and fU.exists(mappingFilePath):
             mapD = mU.doImport(mappingFilePath, fmt="json")
         else:
