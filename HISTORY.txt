@@ -14,4 +14,5 @@
  2-Jun-2020 V0.22 Update for validation schema V004
 13-Aug-2021 V0.23 Adjustment to caching category and attribute data mappings and tests
 20-Aug-2021 V0.24 Suppress verbose logging details in ValidationReportProvider
+26-Aug-2021 V0.25 Additional test for failed cases in ValidationReportProvider
 #

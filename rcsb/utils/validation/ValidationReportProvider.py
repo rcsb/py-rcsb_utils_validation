@@ -48,7 +48,11 @@ class ValidationReportProvider(SingletonClass):
             logger.debug("Retrying loading validation mapping data")
             self.__mapD = self.__reload(urlTarget, dirPath, useCache=False)
         #
-        logger.debug("Loaded mapping attributes (%d) categories (%d)", len(self.__mapD["attributes"]), len(self.__mapD["categories"]))
+        logger.debug(
+            "Loaded mapping attributes (%d) categories (%d)",
+            len(self.__mapD["attributes"]) if "attributes" in self.__mapD else 0,
+            len(self.__mapD["categories"]) if "categories" in self.__mapD else 0,
+        )
         self.__reader = None
         logger.debug("Leaving constructor")
 
