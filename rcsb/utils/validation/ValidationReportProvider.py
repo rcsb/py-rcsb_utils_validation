@@ -18,6 +18,7 @@ __license__ = "Apache 2.0"
 
 import logging
 import os
+import uuid
 
 from rcsb.utils.io.FileUtil import FileUtil
 from rcsb.utils.io.MarshalUtil import MarshalUtil
@@ -78,21 +79,24 @@ class ValidationReportProvider(SingletonClass):
         mappingFilePath = os.path.join(dirPath, fn)
         mU.mkdir(dirPath)
         #
-        if not useCache:
-            for fp in [mappingFilePath]:
-                try:
-                    os.remove(fp)
-                except Exception:
-                    pass
-        #
+        # if not useCache:
+        #     for fp in [mappingFilePath]:
+        #         try:
+        #             os.remove(fp)
+        #         except Exception:
+        #             pass
+        # #
         logger.debug("Loading validation mapping data in %s (useCache %r)", fn, useCache)
         if useCache and fU.exists(mappingFilePath):
             mapD = mU.doImport(mappingFilePath, fmt="json")
         else:
             logger.info("Fetching url %s to resource file %s", urlTarget, mappingFilePath)
-            ok = fU.get(urlTarget, mappingFilePath)
+            tS = uuid.uuid4().hex
+            tP = os.path.join(dirPath, "._" + tS)
+            ok = fU.get(urlTarget, tP)
             if ok:
-                mapD = mU.doImport(mappingFilePath, fmt="json")
+                mapD = mU.doImport(tP, fmt="json")
+                os.replace(tP, mappingFilePath)
         return mapD
 
     def getReader(self, **kwargs):
