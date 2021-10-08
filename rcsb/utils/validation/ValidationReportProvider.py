@@ -42,7 +42,7 @@ class ValidationReportProvider(SingletonClass):
 
         """
 
-        urlTarget = kwargs.get("urlTarget", "https://raw.githubusercontent.com/rcsb/py-rcsb_exdb_assets/master/dictionaries/vrpt_dictmap.json")
+        urlTarget = kwargs.get("urlTarget", "https://raw.githubusercontent.com/rcsb/py-rcsb_exdb_assets/development/dictionaries/vrpt_dictmap.json")
         dirPath = kwargs.get("dirPath", ".")
         useCache = kwargs.get("useCache", True)
         self.__mapD = self.__reload(urlTarget, dirPath, useCache=useCache)
