@@ -16,4 +16,5 @@
 20-Aug-2021 V0.24 Suppress verbose logging details in ValidationReportProvider
 26-Aug-2021 V0.25 Additional test for failed cases in ValidationReportProvider
 11-Sep-2021 V0.26 Further adjustments to ValidationReportProvider cache file management
+ 8-Oct-2021 V0.27 Add ValidationReportAdapter() and deprecate ValidationReportProvider()
 #

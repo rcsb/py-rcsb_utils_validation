@@ -12,7 +12,7 @@
 Tests for wwPDB validation schema to dictionary translation tools.
 """
 
-__docformat__ = "restructuredtext en"
+__docformat__ = "google en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Apache 2.0"
@@ -72,8 +72,7 @@ class ValidationReportSchemaUtilsTests(unittest.TestCase):
         self.assertTrue(len(dictionaryMap["attributes"]) > 420)
 
     def testExportMapping(self):
-        """ Export schema correspondences as CSV.
-        """
+        """Export schema correspondences as CSV."""
         vrsu = ValidationReportSchemaUtils()
         sObj = vrsu.readSchema(self.__xsdPath)
         dictionaryMap = vrsu.getDictionaryMap(sObj)

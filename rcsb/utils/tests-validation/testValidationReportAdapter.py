@@ -1,16 +1,13 @@
 ##
-# File:    ValidationReportProviderTests.py (DEPRECATED)
+# File:    ValidationReportAdapterTests.py
 # Author:  J. Westbrook
-# Date:    3-Feb-2019
+# Date:    8-Oct-2021
 # Version: 0.001
 #
 # Update:
-#   2-Jun-2020 jdw Add V4 EM test case
-#   8-Oct-2021 jdw deprecated this module
-#
 ##
 """
-Tests for provider of validation report extraction and translation utilities.
+Tests for adapter of validation report extraction and translation utilities.
 
 """
 
@@ -24,7 +21,7 @@ import os
 import unittest
 
 from rcsb.utils.io.MarshalUtil import MarshalUtil
-from rcsb.utils.validation.ValidationReportProvider import ValidationReportProvider
+from rcsb.utils.validation.ValidationReportAdapter import ValidationReportAdapter
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 TOPDIR = os.path.dirname(os.path.dirname(HERE))
@@ -33,7 +30,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s]-%(mo
 logger = logging.getLogger()
 
 
-class ValidationReportProviderTests(unittest.TestCase):
+class ValidationReportAdapterTests(unittest.TestCase):
     def setUp(self):
         self.__dirPath = os.path.join(os.path.dirname(TOPDIR), "rcsb", "mock-data")
         self.__workPath = os.path.join(HERE, "test-output")
@@ -49,20 +46,20 @@ class ValidationReportProviderTests(unittest.TestCase):
 
     def testProviderReadValidationReport(self):
         mU = MarshalUtil()
-        vpr = ValidationReportProvider(dirPath=os.path.join(self.__workPath, "vprt"), useCache=False, cleaCache=True)
+        vpr = ValidationReportAdapter(dirPath=os.path.join(self.__workPath, "vprt"), useCache=False, cleaCache=True)
         vrd = vpr.getReader()
         cL = mU.doImport(self.__exampleFileXray, fmt="xml", marshalHelper=vrd.toCif)
         ok = mU.doExport(self.__cifFileXray, cL, fmt="mmcif")
         self.assertTrue(ok)
         #
-        vpr = ValidationReportProvider(dirPath=os.path.join(self.__workPath, "vprt"), useCache=True, cleaCache=False)
+        vpr = ValidationReportAdapter(dirPath=os.path.join(self.__workPath, "vprt"), useCache=True, cleaCache=False)
         vrd = vpr.getReader()
         xrt = mU.doImport(self.__exampleFileNmr, fmt="xml")
         cL = vrd.toCif(xrt)
         ok = mU.doExport(self.__cifFileNmr, cL, fmt="mmcif")
         self.assertTrue(ok)
         #
-        vpr = ValidationReportProvider(dirPath=os.path.join(self.__workPath, "vprt"), useCache=True, cleaCache=False)
+        vpr = ValidationReportAdapter(dirPath=os.path.join(self.__workPath, "vprt"), useCache=True, cleaCache=False)
         vrd = vpr.getReader()
         xrt = mU.doImport(self.__exampleFilEm, fmt="xml")
         cL = vrd.toCif(xrt)
@@ -72,7 +69,7 @@ class ValidationReportProviderTests(unittest.TestCase):
 
 def providerReadValidationReport():
     suiteSelect = unittest.TestSuite()
-    suiteSelect.addTest(ValidationReportProviderTests("testProviderReadValidationReport"))
+    suiteSelect.addTest(ValidationReportAdapterTests("testProviderReadValidationReport"))
     return suiteSelect
 
 

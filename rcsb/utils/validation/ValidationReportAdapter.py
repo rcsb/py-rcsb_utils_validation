@@ -1,15 +1,14 @@
 ##
-# File:    ValidationReportProvider.py (DEPRECATED)
+# File:    ValidationReportAdapter.py
 # Author:  J. Westbrook
-# Date:    16-Aug-2019
+# Date:    8-Oct-2021
 # Version: 0.001 Initial version
 #
 # Updates:
-#  2-Jun-2020 jdw update with schema V4 mapping file
-#  8-Oct-2021 jdw deprecated this module
+#
 ##
 """
-Resource provider for validation report reader and translator.
+Resource adapter for validation reports providing reader and translator tools.
 
 """
 __docformat__ = "google en"
@@ -29,11 +28,11 @@ from rcsb.utils.validation.ValidationReportReader import ValidationReportReader
 logger = logging.getLogger(__name__)
 
 
-class ValidationReportProvider(SingletonClass):
-    """Resource provider for validation report reader and translator."""
+class ValidationReportAdapter(SingletonClass):
+    """Resource adapter for validation reports providing reader and translator tools."""
 
     def __init__(self, **kwargs):
-        """Resource provider for validation report reader and translator.
+        """Resource adapter for validation reports providing reader and translator tools.
 
         Args:
             urlTarget (str): URL for schema mapping file
@@ -42,7 +41,7 @@ class ValidationReportProvider(SingletonClass):
 
         """
 
-        urlTarget = kwargs.get("urlTarget", "https://raw.githubusercontent.com/rcsb/py-rcsb_exdb_assets/master/dictionaries/vrpt_dictmap.json")
+        urlTarget = kwargs.get("urlTarget", "https://raw.githubusercontent.com/rcsb/py-rcsb_exdb_assets/master/dictionary_files/reference/vrpt_dictmap.json")
         dirPath = kwargs.get("dirPath", ".")
         useCache = kwargs.get("useCache", True)
         self.__mapD = self.__reload(urlTarget, dirPath, useCache=useCache)
