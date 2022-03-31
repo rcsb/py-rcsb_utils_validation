@@ -4,8 +4,8 @@
 # Date:    3-Feb-2019
 # Version: 0.001
 #
-# Update:
-#
+# Updates:
+#  30-Mar-2022  dwp remove deprecated xml.etree.cElementTree module
 #
 ##
 """
@@ -18,16 +18,13 @@ import gzip
 import logging
 import re
 import time
+import xml.etree.ElementTree as ET
 
 from mmcif.api.DataCategory import DataCategory
 from mmcif.api.PdbxContainers import CifName
 from mmcif.api.PdbxContainers import DataContainer
 from mmcif.api.PdbxContainers import DefinitionContainer
 
-try:
-    import xml.etree.cElementTree as ET
-except ImportError:
-    import xml.etree.ElementTree as ET
 
 logger = logging.getLogger(__name__)
 
