@@ -85,7 +85,7 @@ class ValidationReportReader(object):
         curContainer = DataContainer(containerName)
         for elName in rD:
             catName = elName
-            if (not rD[elName]) or (not self.__attribD[catName]) or (catName in ["programs"]):
+            if (not rD[elName]) or (catName not in self.__attribD) or (not self.__attribD[catName]) or (catName in ["programs"]):
                 continue
             hasOrdinal = "ordinal" in self.__attribD[catName]
             rowList = rD[elName]
