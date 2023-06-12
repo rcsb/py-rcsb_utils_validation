@@ -103,7 +103,7 @@ class ValidationReportReader(object):
             #
             # Set a reasonable order for these attributes
             #
-            sD = {ky: self.__atOrdD[ky] for ky in attributeNameList}
+            sD = {ky: self.__atOrdD[ky] for ky in attributeNameList if ky in self.__atOrdD}
             srtAtL = [tup[0] for tup in sorted(sD.items(), key=operator.itemgetter(1))]
             logger.debug("Category %s sorted attributes %r", catName, srtAtL)
 
