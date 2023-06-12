@@ -41,8 +41,8 @@ class ValidationReportReaderTests(unittest.TestCase):
         self.__exampleFileXray = os.path.join(self.__dirPath, "3rer_validation.xml")
         self.__cifFileXray = os.path.join(self.__workPath, "3rer_validation.cif")
         #
-        self.__exampleFileNmr = os.path.join(self.__dirPath, "6drg_validation.xml")
-        self.__cifFileNmr = os.path.join(self.__workPath, "6drg_validation.cif")
+        self.__exampleFileNmr = os.path.join(self.__dirPath, "7jia_validation.xml")
+        self.__cifFileNmr = os.path.join(self.__workPath, "7jia_validation.cif")
         #
         self.__exampleFileEm = os.path.join(self.__dirPath, "5a32_validation.xml")
         self.__cifFileEm = os.path.join(self.__workPath, "5a32_validation.cif")

@@ -5,7 +5,7 @@
 # Version: 0.001
 #
 # Update:
-#
+# 12-Jun-2023 aae Handle unknown attributes and element names when converting XML
 #
 ##
 """
