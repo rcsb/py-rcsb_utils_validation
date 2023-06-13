@@ -5,7 +5,7 @@
 # Version: 0.001
 #
 # Update:
-#
+# 12-Jun-2023 aae Handle unknown attributes and element names when converting XML
 #
 ##
 """
@@ -85,7 +85,7 @@ class ValidationReportReader(object):
         curContainer = DataContainer(containerName)
         for elName in rD:
             catName = elName
-            if (not rD[elName]) or (not self.__attribD[catName]) or (catName in ["programs"]):
+            if (not rD[elName]) or (not self.__attribD.get(catName)) or (catName in ["programs"]):
                 continue
             hasOrdinal = "ordinal" in self.__attribD[catName]
             rowList = rD[elName]
@@ -103,7 +103,7 @@ class ValidationReportReader(object):
             #
             # Set a reasonable order for these attributes
             #
-            sD = {ky: self.__atOrdD[ky] for ky in attributeNameList}
+            sD = {ky: self.__atOrdD[ky] for ky in attributeNameList if ky in self.__atOrdD}
             srtAtL = [tup[0] for tup in sorted(sD.items(), key=operator.itemgetter(1))]
             logger.debug("Category %s sorted attributes %r", catName, srtAtL)
 
