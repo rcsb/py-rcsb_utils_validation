@@ -21,4 +21,5 @@
 23-Dec-2022 V0.29 Configuration changes to support tox 4
 22-Mar-2023 V0.30 Update references to py-rcsb_exdb_assets master branch
 12-Jun-2023 V0.31 Handle unknown attributes and element names when converting XML
+ 1-Jul-2024 V0.32 Update package version with latest setuptools
 #
