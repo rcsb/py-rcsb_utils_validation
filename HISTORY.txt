@@ -23,4 +23,5 @@
 12-Jun-2023 V0.31 Handle unknown attributes and element names when converting XML
  1-Jul-2024 V0.32 Update package version with latest setuptools
  9-Dec-2024 V0.33 Update Azure pipelines to use latest macOS, Ubuntu, and python 3.10
+25-Aug-2025 V0.34 Remove future and six from requirements
 #
