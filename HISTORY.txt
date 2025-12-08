@@ -24,4 +24,5 @@
  1-Jul-2024 V0.32 Update package version with latest setuptools
  9-Dec-2024 V0.33 Update Azure pipelines to use latest macOS, Ubuntu, and python 3.10
 25-Aug-2025 V0.34 Remove future and six from requirements
+ 8-Dec-2025 V0.35 Switch from setuptools to hatch build system and update pipelines to Python 3.13
 #

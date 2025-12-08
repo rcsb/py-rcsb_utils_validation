@@ -195,7 +195,7 @@ class ValidationReportReader(object):
         """
         rL = []
         elV = xrt.find("EM_validation")
-        if not elV:
+        if elV is None:
             return rL
         #
         graphDataL = []
@@ -266,7 +266,7 @@ class ValidationReportReader(object):
                     for cN in ["all_atoms", "backbone"]:
                         ch = el.find(cN)
                         abbrev = "aa" if cN == "all_atoms" else "bb"
-                        if ch:
+                        if ch is not None:
                             gId = "atom_inclusion_%s" % cN
                             gdId = "d_ai_%s" % abbrev
                             dL = self.__getGraphDataElements(ch, graphDataId=gdId)
