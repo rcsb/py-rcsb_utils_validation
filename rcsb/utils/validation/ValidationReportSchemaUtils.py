@@ -926,7 +926,7 @@ class ValidationReportSchemaUtils(object):
             rD = {"name": name, "description": desc}
             cTyp = el.find("{ns}complexType".format(ns=ns))
             #
-            if cTyp and cTyp is not None:
+            if cTyp is not None:
                 atL = []
                 inlineD = {}
                 for ch in cTyp:

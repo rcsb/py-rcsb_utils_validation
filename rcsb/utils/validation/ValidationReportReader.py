@@ -266,7 +266,7 @@ class ValidationReportReader(object):
                     for cN in ["all_atoms", "backbone"]:
                         ch = el.find(cN)
                         abbrev = "aa" if cN == "all_atoms" else "bb"
-                        if ch and ch is not None:
+                        if ch is not None:
                             gId = "atom_inclusion_%s" % cN
                             gdId = "d_ai_%s" % abbrev
                             dL = self.__getGraphDataElements(ch, graphDataId=gdId)
