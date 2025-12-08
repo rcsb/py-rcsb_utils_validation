@@ -838,7 +838,7 @@ class ValidationReportSchemaUtils(object):
             # mCode = atD['use'] if 'use' in atD else 'optional'
             desc = el.findtext("{ns}annotation/{ns}documentation".format(ns=ns))
 
-            sTyp = el.find("{ns}simpleType/{ns}restriction".format(ns=ns)).attrib["base"] if el.find("{ns}simpleType/{ns}restriction".format(ns=ns)) else None
+            sTyp = el.find("{ns}simpleType/{ns}restriction".format(ns=ns)).attrib["base"] if el.find("{ns}simpleType/{ns}restriction".format(ns=ns)) is not None else None
             #
             sTyp = el.find("{ns}simpleType/{ns}union".format(ns=ns)).attrib["memberTypes"].split(" ")[0] if el.find("{ns}simpleType/{ns}union".format(ns=ns)) is not None else sTyp
             #
@@ -870,13 +870,13 @@ class ValidationReportSchemaUtils(object):
             desc = el.findtext("{ns}annotation/{ns}documentation".format(ns=ns))
             sTyp = el.find("{ns}union".format(ns=ns)).attrib["memberTypes"].split(" ")[0] if el.find("{ns}union".format(ns=ns)) is not None else None
             #
-            sTyp = el.find("{ns}restriction".format(ns=ns)).attrib["base"] if el.find("{ns}restriction".format(ns=ns)) else sTyp
+            sTyp = el.find("{ns}restriction".format(ns=ns)).attrib["base"] if el.find("{ns}restriction".format(ns=ns)) is not None else sTyp
             #
             #
             rD = {"name": name, "type": sTyp, "description": desc}
             if sTyp:
                 rEl = el.find("{ns}restriction".format(ns=ns))
-                if not rEl:
+                if rEl is None:
                     logger.debug("No restrictions for simpletype %s %s", name, sTyp)
                 else:
                     resD = self.__getRestictions(rEl, ns)
